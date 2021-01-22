@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "47132843449",
+    "project_id": "thesessions-21410",
+    "storage_bucket": "thesessions-21410.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:47132843449:android:655d1d4e3101d37a982a68",
+        "android_client_info": {
+          "package_name": "com.theyestech.the_sessions"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "47132843449-ft597aqfmn9knbfcl4ql194b9m1nq8g1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxGrKueIFGRQQUK9zYs-0JinHEJmeZrt8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "47132843449-ft597aqfmn9knbfcl4ql194b9m1nq8g1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
