@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
 import 'package:the_sessions/screens/LandingPage/landingHelpers.dart';
 import 'package:the_sessions/screens/LandingPage/landingServices.dart';
+import 'package:the_sessions/screens/LandingPage/landingUtils.dart';
 import 'package:the_sessions/screens/Splashscreen/splashScreen.dart';
 import 'package:the_sessions/services/Authentication.dart';
+import 'package:the_sessions/services/FirebaseOperations.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,9 +31,11 @@ class MyApp extends StatelessWidget {
         ),
       ),
       providers: [
+        ChangeNotifierProvider(create: (_) => FirebaseOperations()),
         ChangeNotifierProvider(create: (_) => LandingService()),
         ChangeNotifierProvider(create: (_) => Authentication()),
-        ChangeNotifierProvider(create: (_) => LandingHelpers())
+        ChangeNotifierProvider(create: (_) => LandingHelpers()),
+        ChangeNotifierProvider(create: (_) => LandingUtils())
       ],
     );
   }
