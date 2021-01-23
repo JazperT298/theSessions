@@ -38,6 +38,7 @@ dependencies:
   google_sign_in: ^4.5.9
   image_picker: ^0.6.7+21
   cloud_firestore: ^0.16.0
+  custom_navigation_bar: ^0.7.1
 
 dev_dependencies:
   flutter_test:
@@ -69,7 +70,8 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   assets:
-    - assets/images/
+    - assets/images/login.png
+    - assets/images/empty.png
 
   fonts:
     - family: Poppins

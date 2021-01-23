@@ -28,7 +28,7 @@ class LandingUtils with ChangeNotifier {
     return showModalBottomSheet(context: context, builder: (context){
       return Container(
         height: MediaQuery.of(context).size.height * 0.1,
-        width: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           color: constantColors.blueColor,
           borderRadius: BorderRadius.circular(12.0)

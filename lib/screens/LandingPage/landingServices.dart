@@ -22,7 +22,7 @@ class LandingService with ChangeNotifier{
     return showModalBottomSheet(context: context, builder: (context){
       return Container(
         height: MediaQuery.of(context).size.height * 0.30,
-        width: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
         child: Column(
           children: [
             Padding(
@@ -146,7 +146,7 @@ class LandingService with ChangeNotifier{
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Container(
           height: MediaQuery.of(context).size.height * 0.5,
-          width: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             color: constantColors.blueGreyColor,
             borderRadius: BorderRadius.only(topLeft: Radius.circular(12.0), topRight: Radius.circular(12.0))
@@ -269,7 +269,7 @@ class LandingService with ChangeNotifier{
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Container(
           height: MediaQuery.of(context).size.height * 0.30,
-          width: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             color: constantColors.blueGreyColor,
             borderRadius: BorderRadius.only(topRight: Radius.circular(12.0), topLeft: Radius.circular(12.0))
@@ -377,7 +377,7 @@ class LandingService with ChangeNotifier{
           borderRadius: BorderRadius.circular(15.0)
         ),
         height: MediaQuery.of(context).size.height * 0.1,
-        width: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
         child: Center(
           child: Text(
             warning,
