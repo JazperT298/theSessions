@@ -103,14 +103,33 @@ class LandingService with ChangeNotifier{
             return new ListView(
               children: snapshot.data.docs.map((DocumentSnapshot documentSnapshot){
                 return ListTile(
-                  trailing: IconButton(
-                    icon: Icon(
-                      FontAwesomeIcons.trashAlt,color: constantColors.redColor,
+                  trailing: Container(
+                    width: 120.0,
+                    height: 20.0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          icon: Icon(FontAwesomeIcons.check,
+                          color: constantColors.blueColor,),
+                          onPressed: () {
+                            Provider.of<Authentication>(context, listen: false).logIntoAccount(documentSnapshot.data()['useremaail'], documentSnapshot.data()['userpassword']).whenComplete((){
+                              Navigator.pushReplacement(context, PageTransition(child: Homepage(), type: PageTransitionType.leftToRight));
+                            });
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(FontAwesomeIcons.trashAlt,
+                            color: constantColors.redColor,),
+                          onPressed: () {
+                            Provider.of<FirebaseOperations>(context, listen: false).deleteUserData(documentSnapshot.data()['useruid']);
+                          },
+                        ),
+                      ],
                     ),
-                    onPressed: () {},
                   ),
                   leading: CircleAvatar(
-                    backgroundColor: constantColors.transparent,
+                    backgroundColor: constantColors.darkColor,
                     backgroundImage: NetworkImage(
                       documentSnapshot.data()['userimage']
                     ),
@@ -119,7 +138,7 @@ class LandingService with ChangeNotifier{
                     documentSnapshot.data()['useremail'],
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: constantColors.greenColor,
+                      color: constantColors.whiteColor,
                       fontSize: 12.0
                     ),
                   ),
@@ -237,6 +256,7 @@ class LandingService with ChangeNotifier{
                           .whenComplete((){
                             print('Creating collection');
                         Provider.of<FirebaseOperations>(context, listen: false).createUserCollection(context, {
+                          'userpassword': userPasswordController.text,
                           'useruid':Provider.of<Authentication>(context,listen: false).getUserUid,
                           'useremail':userEmailController.text,
                           'username': userNameController.text,
