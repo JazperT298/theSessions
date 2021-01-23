@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:the_sessions/screens/FeedPage/FeedHelpers.dart';
 
 class Feed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      drawer: Drawer(),
+      appBar: Provider.of<FeedHelpers>(context, listen: false).appBar(context),
+      body: Provider.of<FeedHelpers>(context, listen: false).feedBody(context),
+    );
   }
 }

@@ -2,12 +2,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
+import 'package:the_sessions/screens/FeedPage/FeedHelpers.dart';
 import 'package:the_sessions/screens/Homepage/HomepageHelpers.dart';
 import 'package:the_sessions/screens/LandingPage/landingHelpers.dart';
 import 'package:the_sessions/screens/LandingPage/landingServices.dart';
 import 'package:the_sessions/screens/LandingPage/landingUtils.dart';
 import 'package:the_sessions/screens/ProfilePage/ProfileHelpers.dart';
 import 'package:the_sessions/screens/Splashscreen/splashScreen.dart';
+import 'package:the_sessions/screens/Utils/UploadPost.dart';
 import 'package:the_sessions/services/Authentication.dart';
 import 'package:the_sessions/services/FirebaseOperations.dart';
 
@@ -33,6 +35,8 @@ class MyApp extends StatelessWidget {
         ),
       ),
       providers: [
+        ChangeNotifierProvider(create: (_) => UploadPost()),
+        ChangeNotifierProvider(create: (_) => FeedHelpers()),
         ChangeNotifierProvider(create: (_) => ProfileHelpers()),
         ChangeNotifierProvider(create: (_) => HomepageHelpers()),
         ChangeNotifierProvider(create: (_) => FirebaseOperations()),
