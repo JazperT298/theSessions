@@ -39,6 +39,7 @@ dependencies:
   image_picker: ^0.6.7+21
   cloud_firestore: ^0.16.0
   custom_navigation_bar: ^0.7.1
+  lottie: ^0.7.0+1
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +74,7 @@ flutter:
     - assets/images/login.png
     - assets/images/empty.png
     - assets/icons/sunflower.png
+    - assets/animations/loading.json
 
   fonts:
     - family: Poppins
