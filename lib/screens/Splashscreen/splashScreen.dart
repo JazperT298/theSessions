@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
-import 'package:the_sessions/services/LandingPage/landingPage.dart';
+import 'package:the_sessions/screens/LandingPage/landingPage.dart';
 
 class Splashscreen extends StatefulWidget {
   @override

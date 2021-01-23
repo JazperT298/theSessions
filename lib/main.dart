@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
-import 'package:the_sessions/services/LandingPage/landingHelpers.dart';
-import 'package:the_sessions/services/Splashscreen/splashScreen.dart';
+import 'package:the_sessions/screens/LandingPage/landingHelpers.dart';
+import 'package:the_sessions/screens/Splashscreen/splashScreen.dart';
 
 void main() {
   runApp(MyApp());
