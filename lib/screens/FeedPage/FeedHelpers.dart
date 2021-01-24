@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
+import 'package:the_sessions/screens/Utils/PostOptions.dart';
 import 'package:the_sessions/screens/Utils/UploadPost.dart';
 import 'package:the_sessions/services/Authentication.dart';
 
@@ -178,17 +179,33 @@ class FeedHelpers with ChangeNotifier{
                                 color: constantColors.redColor,
                                 size: 18.0,
                               ),
+                              onTap: () {
+                                print('Adding like..');
+                                Provider.of<PostFunctions>(context, listen: false).addLike(context, documentSnapshot.data()['caption'], Provider.of<Authentication>(context, listen: false).getUserUid);
+                              },
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: Text(
-                                '0',
-                                style: TextStyle(
-                                  color: constantColors.whiteColor,
-                                  fontSize: 16.0
-                                ),
-                              ),
-                            ),
+                            StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance.collection('posts').doc(documentSnapshot.data()['caption']).collection('likes').snapshots(),
+                              builder: (context, snapshot){
+                                if(snapshot.connectionState == ConnectionState.waiting){
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }else{
+                                  return Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(
+                                      snapshot.data.docs.length.toString(),
+                                      style: TextStyle(
+                                        color: constantColors.whiteColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                            )
                           ],
                         ),
                       ),
@@ -198,6 +215,9 @@ class FeedHelpers with ChangeNotifier{
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             GestureDetector(
+                              onTap: (){
+                                Provider.of<PostFunctions>(context, listen: false).showCommentsSheet(context, documentSnapshot, documentSnapshot.data()['caption']);
+                              },
                               child: Icon(
                                 FontAwesomeIcons.comment,
                                 color: constantColors.blueColor,

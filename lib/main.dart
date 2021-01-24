@@ -9,6 +9,7 @@ import 'package:the_sessions/screens/LandingPage/landingServices.dart';
 import 'package:the_sessions/screens/LandingPage/landingUtils.dart';
 import 'package:the_sessions/screens/ProfilePage/ProfileHelpers.dart';
 import 'package:the_sessions/screens/Splashscreen/splashScreen.dart';
+import 'package:the_sessions/screens/Utils/PostOptions.dart';
 import 'package:the_sessions/screens/Utils/UploadPost.dart';
 import 'package:the_sessions/services/Authentication.dart';
 import 'package:the_sessions/services/FirebaseOperations.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       providers: [
+        ChangeNotifierProvider(create: (_) => PostFunctions()),
         ChangeNotifierProvider(create: (_) => UploadPost()),
         ChangeNotifierProvider(create: (_) => FeedHelpers()),
         ChangeNotifierProvider(create: (_) => ProfileHelpers()),
