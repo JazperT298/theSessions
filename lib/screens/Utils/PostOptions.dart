@@ -385,7 +385,7 @@ class PostFunctions with ChangeNotifier {
         });
   }
 
-  showRewards(BuildContext context){
+  showRewards(BuildContext context, String postId){
     return showModalBottomSheet(context: context, builder: (context){
        return Container(
          child: Column(
@@ -413,9 +413,47 @@ class PostFunctions with ChangeNotifier {
                  ),
                ),
              ),
-             Container(
-               height: MediaQuery.of(context).size.height * 0.1,
-
+             Padding(
+               padding: const EdgeInsets.only(top: 8.0),
+               child: Container(
+                 height: MediaQuery.of(context).size.height * 0.2,
+                 child: StreamBuilder<QuerySnapshot>(
+                   stream: FirebaseFirestore.instance.collection('awards').snapshots(),
+                   builder: (context, snapshot){
+                     if(snapshot.connectionState == ConnectionState.waiting){
+                       return Center(
+                         child: CircularProgressIndicator(),
+                       );
+                     }else{
+                       return ListView(
+                         scrollDirection: Axis.horizontal,
+                         children: snapshot.data.docs.map((DocumentSnapshot documentSnapshot){
+                           return GestureDetector(
+                             onTap: () async {
+                                print(documentSnapshot.data()['image']);
+                                await Provider.of<FirebaseOperations>(context, listen: false).addAward(postId, {
+                                  'username': Provider.of<FirebaseOperations>(context, listen: false).getInitUserName,
+                                  'userimage': Provider.of<FirebaseOperations>(context, listen: false).getInitUserImage,
+                                  'useruid': Provider.of<Authentication>(context, listen: false).getUserUid,
+                                  'time': Timestamp.now(),
+                                  'award': documentSnapshot.data()['image']
+                                });
+                             },
+                             child: Padding(
+                               padding: const EdgeInsets.only(left: 8.0),
+                               child: Container(
+                                 height: 50.0,
+                                 width: 50.0,
+                                 child: Image.network(documentSnapshot.data()['image']),
+                               ),
+                             ),
+                           );
+                         }).toList(),
+                       );
+                     }
+                   },
+                 ),
+               ),
              ),
            ],
          ),
