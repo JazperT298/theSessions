@@ -3,15 +3,63 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
-import 'package:the_sessions/screens/LandingPage/landingPage.dart';
-import 'package:the_sessions/services/Authentication.dart';
+import 'package:the_sessions/screens/Homepage/Homepage.dart';
 
-class ProfileHelpers with ChangeNotifier {
+class AltProfileHelper with ChangeNotifier {
   ConstantColors constantColors = ConstantColors();
 
-  Widget headerProfile(BuildContext context, dynamic snapshot) {
+  Widget appBar(BuildContext context) {
+    return AppBar(
+      leading: IconButton(
+        icon: Icon(
+          Icons.arrow_back_ios_rounded,
+          color: constantColors.whiteColor,
+        ),
+        onPressed: () {
+          Navigator.pushReplacement(
+              context,
+              PageTransition(
+                  child: Homepage(), type: PageTransitionType.bottomToTop));
+        },
+      ),
+      backgroundColor: constantColors.blueGreyColor.withOpacity(0.4),
+      centerTitle: true,
+      actions: [
+        IconButton(
+          icon: Icon(
+            EvaIcons.moreVertical,
+            color: constantColors.whiteColor,
+          ),
+          onPressed: () {
+            Navigator.pushReplacement(
+                context,
+                PageTransition(
+                    child: Homepage(), type: PageTransitionType.bottomToTop));
+          },
+        )
+      ],
+      title: RichText(
+        text: TextSpan(
+            text: 'The',
+            style: TextStyle(
+                color: constantColors.whiteColor,
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold),
+            children: <TextSpan>[
+              TextSpan(
+                text: ' Sessions',
+                style: TextStyle(
+                    color: constantColors.blueColor,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold),
+              )
+            ]),
+      ),
+    );
+  }
+
+  Widget headerProfile(BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot, String userUid){
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.25,
       width: MediaQuery.of(context).size.width,
@@ -29,7 +77,7 @@ class ProfileHelpers with ChangeNotifier {
                     backgroundColor: constantColors.transparent,
                     radius: 60.0,
                     backgroundImage:
-                        NetworkImage(snapshot.data.data()['userimage']),
+                    NetworkImage(snapshot.data.data()['userimage']),
                   ),
                 ),
                 Padding(
@@ -168,7 +216,6 @@ class ProfileHelpers with ChangeNotifier {
       ),
     );
   }
-
   Widget divider() {
     return Center(
       child: SizedBox(
@@ -238,55 +285,4 @@ class ProfileHelpers with ChangeNotifier {
     );
   }
 
-  logOutDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            backgroundColor: constantColors.darkColor,
-            title: Text(
-              'Logout of theSessions? ',
-              style: TextStyle(
-                  color: constantColors.whiteColor,
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold),
-            ),
-            actions: [
-              MaterialButton(
-                  child: Text(
-                    'No',
-                    style: TextStyle(
-                        color: constantColors.whiteColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
-                        decoration: TextDecoration.underline,
-                        decorationColor: constantColors.whiteColor),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-              MaterialButton(
-                  color: constantColors.redColor,
-                  child: Text(
-                    'Yes',
-                    style: TextStyle(
-                        color: constantColors.whiteColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.0),
-                  ),
-                  onPressed: () {
-                    Provider.of<Authentication>(context, listen: false)
-                        .logOutViaEmail()
-                        .whenComplete(() {
-                      Navigator.pushReplacement(
-                          context,
-                          PageTransition(
-                              child: Landingpage(),
-                              type: PageTransitionType.bottomToTop));
-                    });
-                  }),
-            ],
-          );
-        });
-  }
 }

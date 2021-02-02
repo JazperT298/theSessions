@@ -6,8 +6,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
+import 'package:the_sessions/screens/AltProfile/AltProfile.dart';
 import 'package:the_sessions/screens/Utils/PostOptions.dart';
 import 'package:the_sessions/screens/Utils/UploadPost.dart';
 import 'package:the_sessions/services/Authentication.dart';
@@ -112,6 +114,19 @@ class FeedHelpers with ChangeNotifier {
                         backgroundImage:
                             NetworkImage(documentSnapshot.data()['userimage']),
                       ),
+                      onTap: () {
+                        if (documentSnapshot.data()['useruid'] !=
+                            Provider.of<Authentication>(context, listen: false)
+                                .getUserUid) {
+                          Navigator.pushReplacement(
+                              context,
+                              PageTransition(
+                                  child: AltProfile(
+                                    userUid: documentSnapshot.data()['useruid'],
+                                  ),
+                                  type: PageTransitionType.bottomToTop));
+                        }
+                      },
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
@@ -320,6 +335,13 @@ class FeedHelpers with ChangeNotifier {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             GestureDetector(
+                              onLongPress: () {
+                                Provider.of<PostFunctions>(context,
+                                    listen: false)
+                                    .showAwardsPresenter(
+                                    context,
+                                    documentSnapshot.data()['caption']);
+                              },
                               onTap: () {
                                 Provider.of<PostFunctions>(context,
                                         listen: false)
@@ -372,7 +394,10 @@ class FeedHelpers with ChangeNotifier {
                                 color: constantColors.whiteColor,
                               ),
                               onPressed: () {
-                                Provider.of<PostFunctions>(context, listen: false).showPostOptions(context, documentSnapshot.data()['caption']);
+                                Provider.of<PostFunctions>(context,
+                                        listen: false)
+                                    .showPostOptions(context,
+                                        documentSnapshot.data()['caption']);
                               })
                           : Container(
                               width: 0.0,
