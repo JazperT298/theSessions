@@ -60,7 +60,10 @@ class FeedHelpers with ChangeNotifier {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection('posts')
+                .orderBy('time', descending: true)
+                .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
@@ -89,6 +92,8 @@ class FeedHelpers with ChangeNotifier {
       BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
     return ListView(
       children: snapshot.data.docs.map((DocumentSnapshot documentSnapshot) {
+        Provider.of<PostFunctions>(context, listen: false)
+            .showTimeAgo(documentSnapshot.data()['time']);
         return Container(
           height: MediaQuery.of(context).size.height * 0.62,
           width: MediaQuery.of(context).size.width,
@@ -135,7 +140,8 @@ class FeedHelpers with ChangeNotifier {
                                         fontWeight: FontWeight.bold),
                                     children: <TextSpan>[
                                       TextSpan(
-                                          text: ' , 12 hours ago',
+                                          text:
+                                              ' , ${Provider.of<PostFunctions>(context, listen: false).getImageTimePosted.toString()}',
                                           style: TextStyle(
                                               color: constantColors.lightColor
                                                   .withOpacity(0.8)))
@@ -145,7 +151,39 @@ class FeedHelpers with ChangeNotifier {
                           ],
                         ),
                       ),
-                    )
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      height: MediaQuery.of(context).size.height * 0.05,
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('posts')
+                            .doc(documentSnapshot.data()['caption'])
+                            .collection('awards')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            return new ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: snapshot.data.docs
+                                  .map((DocumentSnapshot documentSnapshot) {
+                                return Container(
+                                  height: 30.0,
+                                  width: 30.0,
+                                  child: Image.network(
+                                      documentSnapshot.data()['award']),
+                                );
+                              }).toList(),
+                            );
+                          }
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -273,7 +311,6 @@ class FeedHelpers with ChangeNotifier {
                                 }
                               },
                             ),
-
                           ],
                         ),
                       ),
@@ -285,7 +322,9 @@ class FeedHelpers with ChangeNotifier {
                             GestureDetector(
                               onTap: () {
                                 Provider.of<PostFunctions>(context,
-                                    listen: false).showRewards(context, documentSnapshot.data()['caption']);
+                                        listen: false)
+                                    .showRewards(context,
+                                        documentSnapshot.data()['caption']);
                               },
                               child: Icon(
                                 FontAwesomeIcons.award,
