@@ -371,7 +371,9 @@ class FeedHelpers with ChangeNotifier {
                                 size: 18.0,
                                 color: constantColors.whiteColor,
                               ),
-                              onPressed: () {})
+                              onPressed: () {
+                                Provider.of<PostFunctions>(context, listen: false).showPostOptions(context, documentSnapshot.data()['caption']);
+                              })
                           : Container(
                               width: 0.0,
                               height: 0.0,

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:the_sessions/screens/LandingPage/landingUtils.dart';
 import 'package:the_sessions/services/Authentication.dart';
 
-class FirebaseOperations with ChangeNotifier{
+class FirebaseOperations with ChangeNotifier {
   UploadTask imageUploadTask;
   String initUserEmail;
   String initUserName;
@@ -16,29 +16,35 @@ class FirebaseOperations with ChangeNotifier{
 
   Future uploadUserAvatar(BuildContext context) async {
     Reference imageReference = FirebaseStorage.instance.ref().child(
-      'userProfileAvatar/${Provider.of<LandingUtils>(context, listen: false).getUserAvatar.path}/${TimeOfDay.now()}'
-    );
-    imageUploadTask = imageReference.putFile(Provider.of<LandingUtils>(context, listen: false).getUserAvatar);
-    await imageUploadTask.whenComplete((){
+        'userProfileAvatar/${Provider.of<LandingUtils>(context, listen: false).getUserAvatar.path}/${TimeOfDay.now()}');
+    imageUploadTask = imageReference.putFile(
+        Provider.of<LandingUtils>(context, listen: false).getUserAvatar);
+    await imageUploadTask.whenComplete(() {
       print('Image upload!');
     });
 
-    imageReference.getDownloadURL().then((url){
-      Provider.of<LandingUtils>(context, listen: false).userAvatarUrl = url.toString();
-      print('the user profile avatar url => ${Provider.of<LandingUtils>(context, listen: false).userAvatarUrl}');
+    imageReference.getDownloadURL().then((url) {
+      Provider.of<LandingUtils>(context, listen: false).userAvatarUrl =
+          url.toString();
+      print(
+          'the user profile avatar url => ${Provider.of<LandingUtils>(context, listen: false).userAvatarUrl}');
       notifyListeners();
     });
   }
 
   Future createUserCollection(BuildContext context, dynamic data) async {
-    return FirebaseFirestore.instance.collection('users').doc(Provider.of<Authentication>(context,listen: false).getUserUid)
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(Provider.of<Authentication>(context, listen: false).getUserUid)
         .set(data);
   }
 
   Future initUserData(BuildContext context) async {
-    return FirebaseFirestore.instance.collection('users').doc(
-      Provider.of<Authentication>(context, listen: false).getUserUid
-    ).get().then((doc){
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(Provider.of<Authentication>(context, listen: false).getUserUid)
+        .get()
+        .then((doc) {
       print('Fetching user data');
       initUserEmail = doc.data()['useremail'];
       initUserImage = doc.data()['userimage'];
@@ -51,16 +57,28 @@ class FirebaseOperations with ChangeNotifier{
   }
 
   Future uploadPostData(String postId, dynamic data) async {
-    return FirebaseFirestore.instance.collection('posts').doc(
-      postId
-    ).set(data);
+    return FirebaseFirestore.instance.collection('posts').doc(postId).set(data);
   }
 
-  Future deleteUserData(String userUid) async {
-    return FirebaseFirestore.instance.collection('users').doc(userUid).delete();
+  Future deleteUserData(String userUid, dynamic collection) async {
+    return FirebaseFirestore.instance
+        .collection(collection)
+        .doc(userUid)
+        .delete();
   }
 
   Future addAward(String postId, dynamic data) async {
-    return FirebaseFirestore.instance.collection('posts').doc(postId).collection('awards').add(data);
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('awards')
+        .add(data);
+  }
+
+  Future updateCaption(String postId, dynamic data) async {
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .update(data);
   }
 }
