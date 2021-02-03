@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
 import 'package:the_sessions/screens/LandingPage/landingUtils.dart';
+import 'package:the_sessions/screens/Messaging/GroupMessage.dart';
 import 'package:the_sessions/services/Authentication.dart';
 import 'package:the_sessions/services/FirebaseOperations.dart';
 
@@ -16,6 +18,97 @@ class ChatroomHelper with ChangeNotifier {
 
   ConstantColors constantColors = ConstantColors();
   final TextEditingController chatroomNameController = TextEditingController();
+
+  showChatroomDetails(BuildContext context, DocumentSnapshot documentSnapshot) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.27,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: constantColors.blueGreyColor,
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(12.0),
+                  topLeft: Radius.circular(12.0)),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 150.0),
+                  child: Divider(
+                    thickness: 4.0,
+                    color: constantColors.whiteColor,
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: constantColors.blueGreyColor,
+                    ),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Members',
+                      style: TextStyle(
+                          color: constantColors.whiteColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0),
+                    ),
+                  ),
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.08,
+                  width: MediaQuery.of(context).size.width,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: constantColors.blueGreyColor,
+                    ),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Admin',
+                      style: TextStyle(
+                          color: constantColors.whiteColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0),
+                    ),
+                  ),
+                ),
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(
+                          documentSnapshot.data()['userimage'],
+                        ),
+                        backgroundColor: constantColors.transparent,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          documentSnapshot.data()['username'],
+                          style: TextStyle(
+                              color: constantColors.whiteColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.0),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
+        });
+  }
 
   showCreateChatRoomSheet(BuildContext context) {
     return showModalBottomSheet(
@@ -176,6 +269,17 @@ class ChatroomHelper with ChangeNotifier {
               children:
                   snapshot.data.docs.map((DocumentSnapshot documentSnapshot) {
                 return new ListTile(
+                  onTap: () {
+                    Navigator.pushReplacement(
+                        context,
+                        PageTransition(
+                            child: GroupMessage(
+                                documentSnapshot: documentSnapshot),
+                            type: PageTransitionType.leftToRight));
+                  },
+                  onLongPress: () {
+                    showChatroomDetails(context, documentSnapshot);
+                  },
                   title: Text(
                     documentSnapshot.data()['roomname'],
                     style: TextStyle(
@@ -199,7 +303,9 @@ class ChatroomHelper with ChangeNotifier {
                   ),
                   leading: CircleAvatar(
                     backgroundColor: constantColors.transparent,
-                    child: Image.asset('assets/icons/sunflower.png'),
+                    backgroundImage: AssetImage(
+                        'assets/icons/sunflower.png'
+                    ),
                     // backgroundImage: NetworkImage(
                     //     'assets/icons/sunflower.png'
                     // )

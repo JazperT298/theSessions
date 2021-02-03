@@ -9,6 +9,7 @@ import 'package:the_sessions/screens/Homepage/HomepageHelpers.dart';
 import 'package:the_sessions/screens/LandingPage/landingHelpers.dart';
 import 'package:the_sessions/screens/LandingPage/landingServices.dart';
 import 'package:the_sessions/screens/LandingPage/landingUtils.dart';
+import 'package:the_sessions/screens/Messaging/GroupMessageHelper.dart';
 import 'package:the_sessions/screens/ProfilePage/ProfileHelpers.dart';
 import 'package:the_sessions/screens/Splashscreen/splashScreen.dart';
 import 'package:the_sessions/screens/Utils/PostOptions.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       providers: [
+        ChangeNotifierProvider(create: (_) => GroupMessagingHelper()),
         ChangeNotifierProvider(create: (_) => ChatroomHelper()),
         ChangeNotifierProvider(create: (_) => AltProfileHelper()),
         ChangeNotifierProvider(create: (_) => PostFunctions()),
