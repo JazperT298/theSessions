@@ -119,7 +119,7 @@ class LandingService with ChangeNotifier {
                           onPressed: () {
                             Provider.of<Authentication>(context, listen: false)
                                 .logIntoAccount(
-                                    documentSnapshot.data()['useremaail'],
+                                    documentSnapshot.data()['useremail'],
                                     documentSnapshot.data()['userpassword'])
                                 .whenComplete(() {
                               Navigator.pushReplacement(
@@ -332,24 +332,6 @@ class LandingService with ChangeNotifier {
                     child: Divider(
                       thickness: 4.0,
                       color: constantColors.whiteColor,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: TextField(
-                      controller: userNameController,
-                      decoration: InputDecoration(
-                        hintText: 'Enter Name... ',
-                        hintStyle: TextStyle(
-                          color: constantColors.whiteColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                      style: TextStyle(
-                          color: constantColors.whiteColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.0),
                     ),
                   ),
                   Padding(

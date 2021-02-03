@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
+import 'package:the_sessions/screens/AltProfile/AltProfile.dart';
 import 'package:the_sessions/screens/Homepage/Homepage.dart';
 import 'package:the_sessions/services/Authentication.dart';
 import 'package:the_sessions/services/FirebaseOperations.dart';
@@ -140,39 +141,44 @@ class AltProfileHelper with ChangeNotifier {
                                 borderRadius: BorderRadius.circular(15.0)),
                             height: 70.0,
                             width: 80.0,
-                            child: Column(
-                              children: [
-                                StreamBuilder<QuerySnapshot>(
-                                  stream: FirebaseFirestore.instance
-                                      .collection('users')
-                                      .doc(snapshot.data.data()['useruid'])
-                                      .collection('followers')
-                                      .snapshots(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return Center(
-                                        child: CircularProgressIndicator(),
-                                      );
-                                    } else {
-                                      return new Text(
-                                        snapshot.data.docs.length.toString(),
-                                        style: TextStyle(
-                                            color: constantColors.whiteColor,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 28.0),
-                                      );
-                                    }
-                                  },
-                                ),
-                                Text(
-                                  'Followers',
-                                  style: TextStyle(
-                                      color: constantColors.whiteColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12.0),
-                                ),
-                              ],
+                            child: GestureDetector(
+                              onTap: () {
+                                checkFollowersSheet(context, snapshot);
+                              },
+                              child: Column(
+                                children: [
+                                  StreamBuilder<QuerySnapshot>(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(snapshot.data.data()['useruid'])
+                                        .collection('followers')
+                                        .snapshots(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      } else {
+                                        return new Text(
+                                          snapshot.data.docs.length.toString(),
+                                          style: TextStyle(
+                                              color: constantColors.whiteColor,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 28.0),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                  Text(
+                                    'Followers',
+                                    style: TextStyle(
+                                        color: constantColors.whiteColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12.0),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           Container(
@@ -427,6 +433,101 @@ class AltProfileHelper with ChangeNotifier {
             decoration: BoxDecoration(
                 color: constantColors.darkColor,
                 borderRadius: BorderRadius.circular(12.0)),
+          );
+        });
+  }
+
+  checkFollowersSheet(BuildContext context, dynamic snapshot) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.4,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+                color: constantColors.blueGreyColor,
+                borderRadius: BorderRadius.circular(12.0)),
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(snapshot.data.data()['useruid'])
+                  .collection('followers')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return new ListView(
+                    children: snapshot.data.docs
+                        .map((DocumentSnapshot documentSnapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return new ListTile(
+                          onTap: () {
+                            if (documentSnapshot.data()['useruid'] !=
+                                Provider.of<Authentication>(context,
+                                    listen: false)
+                                    .getUserUid ) {
+                              Navigator.pushReplacement(
+                                  context,
+                                  PageTransition(
+                                      child: AltProfile(
+                                        userUid:
+                                        documentSnapshot.data()['useruid'],
+                                      ),
+                                      type: PageTransitionType.leftToRight));
+                            }
+                          },
+                          trailing: documentSnapshot.data()['useruid'] ==
+                                  Provider.of<Authentication>(context,
+                                          listen: false)
+                                      .getUserUid
+                              ? Container(
+                                  width: 0.0,
+                                  height: 0.0,
+                                )
+                              : MaterialButton(
+                                  color: constantColors.blueColor,
+                                  child: Text(
+                                    'Unfollow',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0,
+                                        color: constantColors.whiteColor),
+                                  ),
+                                  onPressed: () {},
+                                ),
+                          leading: CircleAvatar(
+                            backgroundColor: constantColors.darkColor,
+                            backgroundImage: NetworkImage(
+                                documentSnapshot.data()['userimage']),
+                          ),
+                          title: Text(
+                            documentSnapshot.data()['username'],
+                            style: TextStyle(
+                                color: constantColors.whiteColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.0),
+                          ),
+                          subtitle: Text(
+                            documentSnapshot.data()['useremail'],
+                            style: TextStyle(
+                                color: constantColors.yellowColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14.0),
+                          ),
+                        );
+                      }
+                    }).toList(),
+                  );
+                }
+              },
+            ),
           );
         });
   }

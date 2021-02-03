@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
+import 'package:the_sessions/screens/AltProfile/AltProfile.dart';
 import 'package:the_sessions/screens/LandingPage/landingPage.dart';
 import 'package:the_sessions/services/Authentication.dart';
 
@@ -121,45 +122,50 @@ class ProfileHelpers with ChangeNotifier {
                           ],
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                            color: constantColors.darkColor,
-                            borderRadius: BorderRadius.circular(15.0)),
-                        height: 70.0,
-                        width: 80.0,
-                        child: Column(
-                          children: [
-                            StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection('users')
-                                  .doc(snapshot.data.data()['useruid'])
-                                  .collection('following')
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                } else {
-                                  return new Text(
-                                    snapshot.data.docs.length.toString(),
-                                    style: TextStyle(
-                                        color: constantColors.whiteColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 28.0),
-                                  );
-                                }
-                              },
-                            ),
-                            Text(
-                              'Following',
-                              style: TextStyle(
-                                  color: constantColors.whiteColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12.0),
-                            ),
-                          ],
+                      GestureDetector(
+                        onTap: () {
+                          checkFollowingSheet(context, snapshot);
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: constantColors.darkColor,
+                              borderRadius: BorderRadius.circular(15.0)),
+                          height: 70.0,
+                          width: 80.0,
+                          child: Column(
+                            children: [
+                              StreamBuilder<QuerySnapshot>(
+                                stream: FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(snapshot.data.data()['useruid'])
+                                    .collection('following')
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else {
+                                    return new Text(
+                                      snapshot.data.docs.length.toString(),
+                                      style: TextStyle(
+                                          color: constantColors.whiteColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 28.0),
+                                    );
+                                  }
+                                },
+                              ),
+                              Text(
+                                'Following',
+                                style: TextStyle(
+                                    color: constantColors.whiteColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12.0),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -214,45 +220,86 @@ class ProfileHelpers with ChangeNotifier {
   }
 
   Widget middleProfile(BuildContext context, dynamic snapshot) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 150.0,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(2.0)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Icon(
-                  FontAwesomeIcons.userAstronaut,
-                  color: constantColors.yellowColor,
-                  size: 16.0,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 150.0,
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(2.0)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Icon(
+                      FontAwesomeIcons.userAstronaut,
+                      color: constantColors.yellowColor,
+                      size: 16.0,
+                    ),
+                    Text(
+                      'Recently Added',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                          color: constantColors.whiteColor),
+                    )
+                  ],
                 ),
-                Text(
-                  'Recently Added',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
-                      color: constantColors.whiteColor),
-                )
-              ],
-            ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Container(
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(snapshot.data.data()['useruid'])
+                        .collection('following')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return new ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: snapshot.data.docs
+                              .map((DocumentSnapshot documentSnapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else {
+                              return new Container(
+                                height: 60.0,
+                                width: 60.0,
+                                child: Image.network(
+                                    documentSnapshot.data()['userimage']),
+                              );
+                            }
+                          }).toList(),
+                        );
+                      }
+                    },
+                  ),
+                  height: MediaQuery.of(context).size.height * 0.08,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      color: constantColors.darkColor.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(15.0)),
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.1,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                  color: constantColors.darkColor.withOpacity(0.4),
-                  borderRadius: BorderRadius.circular(15.0)),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -318,6 +365,88 @@ class ProfileHelpers with ChangeNotifier {
                     });
                   }),
             ],
+          );
+        });
+  }
+
+  checkFollowingSheet(BuildContext context, dynamic snapshot) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.4,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+                color: constantColors.blueGreyColor,
+                borderRadius: BorderRadius.circular(12.0)),
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(snapshot.data.data()['useruid'])
+                  .collection('following')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return new ListView(
+                    children: snapshot.data.docs
+                        .map((DocumentSnapshot documentSnapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return new ListTile(
+                          onTap: () {
+                            Navigator.pushReplacement(context, PageTransition(
+                              child: AltProfile(
+                                userUid: documentSnapshot.data()['useruid'],
+                              ),type: PageTransitionType.topToBottom
+                            ));
+                          },
+                          trailing: MaterialButton(
+                            color: constantColors.blueColor,
+                            child: Text(
+                              'Unfollow',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
+                                color: constantColors.whiteColor
+                              ),
+                            ),
+                            onPressed: () {
+
+                            },
+                          ),
+                          leading: CircleAvatar(
+                            backgroundColor: constantColors.darkColor,
+                            backgroundImage: NetworkImage(
+                                documentSnapshot.data()['userimage']),
+                          ),
+                          title: Text(
+                            documentSnapshot.data()['username'],
+                            style: TextStyle(
+                                color: constantColors.whiteColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.0),
+                          ),
+                          subtitle: Text(
+                            documentSnapshot.data()['useremail'],
+                            style: TextStyle(
+                                color: constantColors.yellowColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14.0),
+                          ),
+                        );
+                      }
+                    }).toList(),
+                  );
+                }
+              },
+            ),
           );
         });
   }
