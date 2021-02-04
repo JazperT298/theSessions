@@ -710,6 +710,8 @@ class PostFunctions with ChangeNotifier {
         context: context,
         builder: (context) {
           return Container(
+            height: MediaQuery.of(context).size.height * 0.2,
+            width: MediaQuery.of(context).size.width,
             child: Column(
               children: [
                 Padding(
@@ -738,7 +740,8 @@ class PostFunctions with ChangeNotifier {
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Container(
-                    height: MediaQuery.of(context).size.height * 0.2,
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    width: MediaQuery.of(context).size.width,
                     child: StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
                           .collection('awards')
