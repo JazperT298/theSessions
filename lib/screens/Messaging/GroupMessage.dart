@@ -83,7 +83,7 @@ class GroupMessage extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           fontSize: 11.0),
                     ),
-                  ],
+                    ],
                 ),
               ),
             ],
@@ -95,6 +95,9 @@ class GroupMessage extends StatelessWidget {
           child: Column(
             children: [
               AnimatedContainer(
+                child: Provider.of<GroupMessagingHelper>(context, listen: false)
+                    .showMessages(context, documentSnapshot,
+                        documentSnapshot.data()['useruid']),
                 height: MediaQuery.of(context).size.height * 0.8,
                 width: MediaQuery.of(context).size.width,
                 duration: Duration(seconds: 1),
