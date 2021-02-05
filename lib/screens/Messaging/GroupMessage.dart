@@ -59,9 +59,9 @@ class GroupMessage extends StatelessWidget {
             children: [
               CircleAvatar(
                 backgroundColor: constantColors.darkColor,
-                backgroundImage: AssetImage('assets/icons/sunflower.png'),
+                // backgroundImage: AssetImage('assets/icons/sunflower.png'),
                 //wala pay avatar
-                //backgroundImage: NetworkImage(documentSnapshot.data()['roomavatar']),
+                backgroundImage: NetworkImage(documentSnapshot.data()['roomavatar']),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),

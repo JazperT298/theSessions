@@ -303,15 +303,15 @@ class ChatroomHelper with ChangeNotifier {
                   ),
                   leading: CircleAvatar(
                     backgroundColor: constantColors.transparent,
-                    backgroundImage: AssetImage(
-                        'assets/icons/sunflower.png'
-                    ),
+                    // backgroundImage: AssetImage(
+                    //     'assets/icons/sunflower.png'
+                    // ),
                     // backgroundImage: NetworkImage(
                     //     'assets/icons/sunflower.png'
                     // )
-                    // backgroundImage: NetworkImage(
-                    //   documentSnapshot.data()['roomavatar']
-                    // ),
+                    backgroundImage: NetworkImage(
+                      documentSnapshot.data()['roomavatar']
+                    ),
                   ),
                 );
               }).toList(),
