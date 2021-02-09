@@ -69,7 +69,9 @@ class _GroupMessageState extends State<GroupMessage> {
               EvaIcons.logOutOutline,
               color: constantColors.redColor,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Provider.of<GroupMessagingHelper>(context, listen: false).leaveTheRoom(context, widget.documentSnapshot.id);
+            },
           ),
         ],
         leading: IconButton(

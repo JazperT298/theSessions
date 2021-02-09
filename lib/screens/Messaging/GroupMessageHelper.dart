@@ -16,6 +16,63 @@ class GroupMessagingHelper with ChangeNotifier {
   String get getLastMessageTime => lastMessageTime;
   ConstantColors constantColors = ConstantColors();
 
+  leaveTheRoom(BuildContext context, String chatRoomName) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: constantColors.darkColor,
+            title: Text(
+              'Leave $chatRoomName?',
+              style: TextStyle(
+                  color: constantColors.whiteColor,
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.bold),
+            ),
+            actions: [
+              MaterialButton(
+                  child: Text(
+                    'No',
+                    style: TextStyle(
+                        color: constantColors.whiteColor,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                        decorationColor: constantColors.whiteColor,
+                        fontSize: 14.0),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+              MaterialButton(
+                color: constantColors.redColor,
+                  child: Text(
+                    'Yes',
+                    style: TextStyle(
+                        color: constantColors.whiteColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14.0),
+                  ),
+                  onPressed: () {
+                    FirebaseFirestore.instance
+                        .collection('chatrooms')
+                        .doc(chatRoomName)
+                        .collection('members')
+                        .doc(Provider.of<Authentication>(context, listen: false)
+                            .getUserUid)
+                        .delete()
+                        .whenComplete(() {
+                      Navigator.pushReplacement(
+                          context,
+                          PageTransition(
+                              child: Homepage(),
+                              type: PageTransitionType.bottomToTop));
+                    });
+                  }),
+            ],
+          );
+        });
+  }
+
   showMessages(BuildContext context, DocumentSnapshot documentSnapshot,
       String adminUserId) {
     return StreamBuilder<QuerySnapshot>(
