@@ -7,6 +7,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
 import 'package:the_sessions/screens/AltProfile/AltProfile.dart';
+import 'package:the_sessions/screens/Homepage/Homepage.dart';
 import 'package:the_sessions/screens/LandingPage/landingUtils.dart';
 import 'package:the_sessions/screens/Messaging/GroupMessage.dart';
 import 'package:the_sessions/services/Authentication.dart';
@@ -28,7 +29,7 @@ class ChatroomHelper with ChangeNotifier {
         context: context,
         builder: (context) {
           return Container(
-            height: MediaQuery.of(context).size.height * 0.27,
+            height: MediaQuery.of(context).size.height * 0.3,
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               color: constantColors.blueGreyColor,
@@ -142,15 +143,102 @@ class ChatroomHelper with ChangeNotifier {
                         ),
                         backgroundColor: constantColors.transparent,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          documentSnapshot.data()['username'],
-                          style: TextStyle(
-                              color: constantColors.whiteColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0),
-                        ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              documentSnapshot.data()['username'],
+                              style: TextStyle(
+                                  color: constantColors.whiteColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.0),
+                            ),
+                          ),
+                          Provider.of<Authentication>(context, listen: false)
+                                      .getUserUid ==
+                                  documentSnapshot.data()['useruid']
+                              ? Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: MaterialButton(
+                                    color: constantColors.redColor,
+                                    child: Text(
+                                      'Delete Room',
+                                      style: TextStyle(
+                                          color: constantColors.whiteColor,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    onPressed: () {
+                                      return showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              backgroundColor:
+                                                  constantColors.darkColor,
+                                              title: Text(
+                                                'Delete Chatroom?',
+                                                style: TextStyle(
+                                                    color: constantColors
+                                                        .whiteColor,
+                                                    fontSize: 14.0,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              actions: [
+                                                MaterialButton(
+                                                    child: Text(
+                                                      'No',
+                                                      style: TextStyle(
+                                                          color: constantColors
+                                                              .whiteColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .underline,
+                                                          decorationColor:
+                                                              constantColors
+                                                                  .whiteColor,
+                                                          fontSize: 14.0),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    }),
+                                                MaterialButton(
+                                                    color:
+                                                        constantColors.redColor,
+                                                    child: Text(
+                                                      'Yes',
+                                                      style: TextStyle(
+                                                          color: constantColors
+                                                              .whiteColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14.0),
+                                                    ),
+                                                    onPressed: () {
+                                                      FirebaseFirestore.instance
+                                                          .collection(
+                                                              'chatrooms')
+                                                          .doc(documentSnapshot
+                                                              .id)
+                                                          .delete()
+                                                          .whenComplete(() {
+                                                        Navigator.pop(context);
+                                                      });
+                                                    }),
+                                              ],
+                                            );
+                                          });
+                                    },
+                                  ),
+                                )
+                              : Container(
+                                  width: 0.0,
+                                  height: 0.0,
+                                )
+                        ],
                       )
                     ],
                   ),
@@ -341,7 +429,8 @@ class ChatroomHelper with ChangeNotifier {
                           .orderBy('time', descending: true)
                           .snapshots(),
                       builder: (context, snapshot) {
-                        showLatestMessageTime(snapshot.data.docs.first.data()['time']);
+                        showLatestMessageTime(
+                            snapshot.data.docs.first.data()['time']);
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return Center(
