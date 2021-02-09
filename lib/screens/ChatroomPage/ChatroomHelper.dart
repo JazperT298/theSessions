@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
+import 'package:the_sessions/screens/AltProfile/AltProfile.dart';
 import 'package:the_sessions/screens/LandingPage/landingUtils.dart';
 import 'package:the_sessions/screens/Messaging/GroupMessage.dart';
 import 'package:the_sessions/services/Authentication.dart';
@@ -60,6 +62,53 @@ class ChatroomHelper with ChangeNotifier {
                   ),
                 ),
                 Container(
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('chatrooms')
+                        .doc(documentSnapshot.id)
+                        .collection('members')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return new Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return new ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: snapshot.data.docs
+                              .map((DocumentSnapshot documentSnapshot) {
+                            return GestureDetector(
+                              onTap: () {
+                                if (Provider.of<Authentication>(context,
+                                            listen: false)
+                                        .getUserUid !=
+                                    documentSnapshot.data()['useruid']) {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      PageTransition(
+                                          child: AltProfile(
+                                            userUid: documentSnapshot
+                                                .data()['useruid'],
+                                          ),
+                                          type:
+                                              PageTransitionType.bottomToTop));
+                                }
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: CircleAvatar(
+                                  backgroundColor: constantColors.darkColor,
+                                  backgroundImage: NetworkImage(
+                                      documentSnapshot.data()['userimage']),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      }
+                    },
+                  ),
                   height: MediaQuery.of(context).size.height * 0.08,
                   width: MediaQuery.of(context).size.width,
                 ),
@@ -309,9 +358,8 @@ class ChatroomHelper with ChangeNotifier {
                     // backgroundImage: NetworkImage(
                     //     'assets/icons/sunflower.png'
                     // )
-                    backgroundImage: NetworkImage(
-                      documentSnapshot.data()['roomavatar']
-                    ),
+                    backgroundImage:
+                        NetworkImage(documentSnapshot.data()['roomavatar']),
                   ),
                 );
               }).toList(),

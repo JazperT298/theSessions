@@ -1,12 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
+import 'package:the_sessions/screens/Homepage/Homepage.dart';
 import 'package:the_sessions/services/Authentication.dart';
 import 'package:the_sessions/services/FirebaseOperations.dart';
 
 class GroupMessagingHelper with ChangeNotifier {
+  bool hasMemberJoined = false;
+  bool get getHsMemberJoined => hasMemberJoined;
   ConstantColors constantColors = ConstantColors();
 
   showMessages(BuildContext context, DocumentSnapshot documentSnapshot,
@@ -199,6 +203,80 @@ class GroupMessagingHelper with ChangeNotifier {
           .getInitUserName,
       'userimage': Provider.of<FirebaseOperations>(context, listen: false)
           .getInitUserImage,
+    });
+  }
+
+  Future checkIfJoined(BuildContext context, String chatRoomName, String chatRoomAdminUid) async {
+    return FirebaseFirestore.instance.collection('chatrooms').doc(chatRoomName).collection('members').doc(Provider.of<Authentication>(context, listen: false).getUserUid).get().then((value) {
+      hasMemberJoined = false;
+      print('Initial state => $hasMemberJoined');
+      if(value.data()['joined'] != null){
+        hasMemberJoined = value.data()['joined'];
+        print('Final state => $hasMemberJoined');
+        notifyListeners();
+      }
+      if(Provider.of<Authentication>(context, listen: false).getUserUid == chatRoomAdminUid){
+        hasMemberJoined = true;
+        notifyListeners();
+      }
+
+    });
+  }
+
+  askToJoin(BuildContext context, String roomName){
+    return showDialog(context: context, builder: (context){
+      return new AlertDialog(
+        backgroundColor: constantColors.darkColor,
+        title: Text(
+          'Join $roomName?',
+          style: TextStyle(
+            color: constantColors.whiteColor,
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold
+          ),
+        ),
+        actions: [
+          MaterialButton(
+            child: Text(
+              'No',
+              style: TextStyle(
+                  color: constantColors.whiteColor,
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.bold,
+                decorationColor: constantColors.whiteColor,
+                decoration: TextDecoration.underline
+              ),
+            ),
+            onPressed: () {
+              Navigator.pushReplacement(context, PageTransition(child: Homepage(), type: PageTransitionType.bottomToTop));
+            },
+          ),
+          MaterialButton(
+            color: constantColors.blueColor,
+            child: Text(
+              'Yes',
+              style: TextStyle(
+                  color: constantColors.whiteColor,
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.bold,
+              ),
+            ),
+            onPressed: () async{
+              FirebaseFirestore.instance.collection('chatrooms').doc(roomName).collection('members').doc(
+                Provider.of<Authentication>(context, listen: false).getUserUid
+              ).set({
+                'joined': true,
+                'username': Provider.of<FirebaseOperations>(context, listen: false).getInitUserName,
+                'userimage': Provider.of<FirebaseOperations>(context, listen: false).getInitUserImage,
+                'useruid': Provider.of<Authentication>(context, listen: false).getUserUid,
+                'time': Timestamp.now(),
+              }).whenComplete(() {
+                Navigator.pop(context);
+              });
+            },
+          )
+        ],
+      );
     });
   }
 }
