@@ -36,7 +36,7 @@ class GroupMessagingHelper with ChangeNotifier {
                   padding: const EdgeInsets.only(top: 4.0),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.125,
+                    height: documentSnapshot.data()['message'] != null ? MediaQuery.of(context).size.height * 0.125 : MediaQuery.of(context).size.height * 0.2,
                     child: Stack(
                       children: [
                         Padding(
@@ -60,12 +60,15 @@ class GroupMessagingHelper with ChangeNotifier {
                               // ),
                               Container(
                                 constraints: BoxConstraints(
-                                    maxHeight:
+                                    maxHeight: documentSnapshot.data()['message'] != null ?
                                         MediaQuery.of(context).size.height *
-                                            0.1,
+                                            0.1 : MediaQuery.of(context).size.height * 0.4,
                                     maxWidth:
-                                        MediaQuery.of(context).size.width *
-                                            0.8),
+                                    documentSnapshot
+                                        .data()['message'] !=
+                                        null
+                                        ? MediaQuery.of(context).size.width * 0.8
+                                        : MediaQuery.of(context).size.width * 0.9,),
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 18.0),
                                   child: Column(
@@ -109,11 +112,21 @@ class GroupMessagingHelper with ChangeNotifier {
                                           ],
                                         ),
                                       ),
+                                      documentSnapshot.data()['message'] != null ?
                                       Text(
                                         documentSnapshot.data()['message'],
                                         style: TextStyle(
                                             color: constantColors.whiteColor,
                                             fontSize: 14.0),
+                                      ) : Padding(
+                                        padding: const EdgeInsets.only(top: 8.0),
+                                        child: Container(
+                                          height: 100.0,
+                                          width: 100.0,
+                                          child: Image.network(
+                                            documentSnapshot.data()['sticker']
+                                          ),
+                                        ),
                                       )
                                     ],
                                   ),
@@ -131,35 +144,35 @@ class GroupMessagingHelper with ChangeNotifier {
                               Positioned(
                                 left: 50.0,
                                 child: Provider.of<Authentication>(context,
-                                    listen: false)
-                                    .getUserUid ==
-                                    documentSnapshot.data()['useruid']
+                                                listen: false)
+                                            .getUserUid ==
+                                        documentSnapshot.data()['useruid']
                                     ? Container(
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(
-                                          Icons.edit,
-                                          color: constantColors.blueColor,
-                                          size: 16.0,
+                                        child: Row(
+                                          children: [
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.edit,
+                                                color: constantColors.blueColor,
+                                                size: 16.0,
+                                              ),
+                                              onPressed: () {},
+                                            ),
+                                            IconButton(
+                                              icon: Icon(
+                                                FontAwesomeIcons.trashAlt,
+                                                color: constantColors.redColor,
+                                                size: 16.0,
+                                              ),
+                                              onPressed: () {},
+                                            )
+                                          ],
                                         ),
-                                        onPressed: () {},
-                                      ),
-                                      IconButton(
-                                        icon: Icon(
-                                          FontAwesomeIcons.trashAlt,
-                                          color: constantColors.redColor,
-                                          size: 16.0,
-                                        ),
-                                        onPressed: () {},
                                       )
-                                    ],
-                                  ),
-                                )
                                     : Container(
-                                  width: 0.0,
-                                  height: 0.0,
-                                ),
+                                        width: 0.0,
+                                        height: 0.0,
+                                      ),
                               ),
                             ],
                           ),
@@ -206,77 +219,190 @@ class GroupMessagingHelper with ChangeNotifier {
     });
   }
 
-  Future checkIfJoined(BuildContext context, String chatRoomName, String chatRoomAdminUid) async {
-    return FirebaseFirestore.instance.collection('chatrooms').doc(chatRoomName).collection('members').doc(Provider.of<Authentication>(context, listen: false).getUserUid).get().then((value) {
+  Future checkIfJoined(BuildContext context, String chatRoomName,
+      String chatRoomAdminUid) async {
+    return FirebaseFirestore.instance
+        .collection('chatrooms')
+        .doc(chatRoomName)
+        .collection('members')
+        .doc(Provider.of<Authentication>(context, listen: false).getUserUid)
+        .get()
+        .then((value) {
       hasMemberJoined = false;
       print('Initial state => $hasMemberJoined');
-      if(value.data()['joined'] != null){
+      if (value.data()['joined'] != null) {
         hasMemberJoined = value.data()['joined'];
         print('Final state => $hasMemberJoined');
         notifyListeners();
       }
-      if(Provider.of<Authentication>(context, listen: false).getUserUid == chatRoomAdminUid){
+      if (Provider.of<Authentication>(context, listen: false).getUserUid ==
+          chatRoomAdminUid) {
         hasMemberJoined = true;
         notifyListeners();
       }
-
     });
   }
 
-  askToJoin(BuildContext context, String roomName){
-    return showDialog(context: context, builder: (context){
-      return new AlertDialog(
-        backgroundColor: constantColors.darkColor,
-        title: Text(
-          'Join $roomName?',
-          style: TextStyle(
-            color: constantColors.whiteColor,
-            fontSize: 16.0,
-            fontWeight: FontWeight.bold
-          ),
-        ),
-        actions: [
-          MaterialButton(
-            child: Text(
-              'No',
+  askToJoin(BuildContext context, String roomName) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return new AlertDialog(
+            backgroundColor: constantColors.darkColor,
+            title: Text(
+              'Join $roomName?',
               style: TextStyle(
                   color: constantColors.whiteColor,
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.bold,
-                decorationColor: constantColors.whiteColor,
-                decoration: TextDecoration.underline
-              ),
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold),
             ),
-            onPressed: () {
-              Navigator.pushReplacement(context, PageTransition(child: Homepage(), type: PageTransitionType.bottomToTop));
-            },
-          ),
-          MaterialButton(
-            color: constantColors.blueColor,
-            child: Text(
-              'Yes',
-              style: TextStyle(
-                  color: constantColors.whiteColor,
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.bold,
+            actions: [
+              MaterialButton(
+                child: Text(
+                  'No',
+                  style: TextStyle(
+                      color: constantColors.whiteColor,
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.bold,
+                      decorationColor: constantColors.whiteColor,
+                      decoration: TextDecoration.underline),
+                ),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                      context,
+                      PageTransition(
+                          child: Homepage(),
+                          type: PageTransitionType.bottomToTop));
+                },
               ),
+              MaterialButton(
+                color: constantColors.blueColor,
+                child: Text(
+                  'Yes',
+                  style: TextStyle(
+                    color: constantColors.whiteColor,
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onPressed: () async {
+                  FirebaseFirestore.instance
+                      .collection('chatrooms')
+                      .doc(roomName)
+                      .collection('members')
+                      .doc(Provider.of<Authentication>(context, listen: false)
+                          .getUserUid)
+                      .set({
+                    'joined': true,
+                    'username':
+                        Provider.of<FirebaseOperations>(context, listen: false)
+                            .getInitUserName,
+                    'userimage':
+                        Provider.of<FirebaseOperations>(context, listen: false)
+                            .getInitUserImage,
+                    'useruid':
+                        Provider.of<Authentication>(context, listen: false)
+                            .getUserUid,
+                    'time': Timestamp.now(),
+                  }).whenComplete(() {
+                    Navigator.pop(context);
+                  });
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  showSticker(BuildContext context, String chatRoomId) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return AnimatedContainer(
+            duration: Duration(seconds: 1),
+            curve: Curves.easeIn,
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 150.0),
+                  child: Divider(
+                    thickness: 4.0,
+                    color: constantColors.whiteColor,
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.1,
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.0),
+                          border: Border.all(color: constantColors.blueColor)
+                        ),
+                        height: 30.0,
+                        width: 30.0,
+                        child: Image.asset('assets/icons/sunflower.png'),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.35,
+                  width: MediaQuery.of(context).size.width,
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('stickers')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return new GridView(
+                            children: snapshot.data.docs
+                                .map((DocumentSnapshot documentSnapshot) {
+                              return GestureDetector(
+                                onTap: () {
+                                  sendStickers(context, documentSnapshot.data()['image'], chatRoomId);
+                                },
+                                child: Container(
+                                  height: 40.0,
+                                  width: 40.0,
+                                  child: Image.network(
+                                      documentSnapshot.data()['image']),
+                                ),
+                              );
+                            }).toList(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3));
+                      }
+                    },
+                  ),
+                )
+              ],
             ),
-            onPressed: () async{
-              FirebaseFirestore.instance.collection('chatrooms').doc(roomName).collection('members').doc(
-                Provider.of<Authentication>(context, listen: false).getUserUid
-              ).set({
-                'joined': true,
-                'username': Provider.of<FirebaseOperations>(context, listen: false).getInitUserName,
-                'userimage': Provider.of<FirebaseOperations>(context, listen: false).getInitUserImage,
-                'useruid': Provider.of<Authentication>(context, listen: false).getUserUid,
-                'time': Timestamp.now(),
-              }).whenComplete(() {
-                Navigator.pop(context);
-              });
-            },
-          )
-        ],
-      );
+            height: MediaQuery.of(context).size.height * 0.5,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+                color: constantColors.darkColor,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12.0),
+                    topRight: Radius.circular(12.0))),
+          );
+        });
+  }
+
+  sendStickers(BuildContext context, String stickerImageUrl, String chatRoomId) async {
+    await FirebaseFirestore.instance.collection('chatrooms').doc(chatRoomId).collection('messages').add({
+      'sticker': stickerImageUrl,
+      'username': Provider.of<FirebaseOperations>(context, listen: false)
+          .getInitUserName,
+      'userimage': Provider.of<FirebaseOperations>(context, listen: false)
+          .getInitUserImage,
+      'time': Timestamp.now()
     });
   }
 }

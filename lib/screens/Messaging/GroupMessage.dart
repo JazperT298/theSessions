@@ -28,22 +28,28 @@ class _GroupMessageState extends State<GroupMessage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Provider.of<GroupMessagingHelper>(context, listen: false).checkIfJoined(
-        context,
-        widget.documentSnapshot.id,
-        widget.documentSnapshot.data()['useruid']).whenComplete(() async{
-          if(Provider.of<GroupMessagingHelper>(context, listen: false).getHsMemberJoined == false){
-            Timer(
-              Duration(milliseconds: 10),
-                () => Provider.of<GroupMessagingHelper>(context, listen: false).askToJoin(context, widget.documentSnapshot.id,)
-            );
-          }
+    Provider.of<GroupMessagingHelper>(context, listen: false)
+        .checkIfJoined(context, widget.documentSnapshot.id,
+            widget.documentSnapshot.data()['useruid'])
+        .whenComplete(() async {
+      if (Provider.of<GroupMessagingHelper>(context, listen: false)
+              .getHsMemberJoined ==
+          false) {
+        Timer(
+            Duration(milliseconds: 10),
+            () => Provider.of<GroupMessagingHelper>(context, listen: false)
+                    .askToJoin(
+                  context,
+                  widget.documentSnapshot.id,
+                ));
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: constantColors.darkColor,
       appBar: AppBar(
         actions: [
           Provider.of<Authentication>(context, listen: false).getUserUid ==
@@ -104,25 +110,28 @@ class _GroupMessageState extends State<GroupMessage> {
                           fontSize: 14.0),
                     ),
                     StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance.collection('chatrooms').doc(
-                        widget.documentSnapshot.id
-                      ).collection('members').snapshots(),
-                        builder: (context, snapshot){
-                          if(snapshot.connectionState == ConnectionState.waiting){
+                        stream: FirebaseFirestore.instance
+                            .collection('chatrooms')
+                            .doc(widget.documentSnapshot.id)
+                            .collection('members')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return Center(
                               child: CircularProgressIndicator(),
                             );
-                          }else{
+                          } else {
                             return new Text(
                               '${snapshot.data.docs.length.toString()} members',
                               style: TextStyle(
-                                  color: constantColors.greenColor.withOpacity(0.5),
+                                  color: constantColors.greenColor
+                                      .withOpacity(0.5),
                                   fontWeight: FontWeight.bold,
                                   fontSize: 11.0),
                             );
                           }
                         }),
-
                   ],
                 ),
               ),
@@ -150,6 +159,11 @@ class _GroupMessageState extends State<GroupMessage> {
                   child: Row(
                     children: [
                       GestureDetector(
+                        onTap: () {
+                          Provider.of<GroupMessagingHelper>(context,
+                                  listen: false)
+                              .showSticker(context, widget.documentSnapshot.id);
+                        },
                         child: CircleAvatar(
                           radius: 18.0,
                           backgroundColor: constantColors.transparent,
