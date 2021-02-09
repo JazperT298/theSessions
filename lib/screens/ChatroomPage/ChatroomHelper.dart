@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +11,11 @@ import 'package:the_sessions/screens/LandingPage/landingUtils.dart';
 import 'package:the_sessions/screens/Messaging/GroupMessage.dart';
 import 'package:the_sessions/services/Authentication.dart';
 import 'package:the_sessions/services/FirebaseOperations.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class ChatroomHelper with ChangeNotifier {
+  String latestMessageTime;
+  String get getLatestMessageTime => latestMessageTime;
   String chatroomAvatarUrl, chatroomId;
   String get getChatroomAvatarUrl => chatroomAvatarUrl;
   String get getChatroomId => chatroomId;
@@ -329,6 +331,34 @@ class ChatroomHelper with ChangeNotifier {
                   onLongPress: () {
                     showChatroomDetails(context, documentSnapshot);
                   },
+                  trailing: Container(
+                    width: 80.0,
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('chatrooms')
+                          .doc(documentSnapshot.id)
+                          .collection('messages')
+                          .orderBy('time', descending: true)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        showLatestMessageTime(snapshot.data.docs.first.data()['time']);
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else {
+                          return Text(
+                            getLatestMessageTime,
+                            style: TextStyle(
+                                color: constantColors.whiteColor,
+                                fontSize: 9.0,
+                                fontWeight: FontWeight.bold),
+                          );
+                        }
+                      },
+                    ),
+                  ),
                   title: Text(
                     documentSnapshot.data()['roomname'],
                     style: TextStyle(
@@ -336,19 +366,45 @@ class ChatroomHelper with ChangeNotifier {
                         fontSize: 14.0,
                         fontWeight: FontWeight.bold),
                   ),
-                  subtitle: Text(
-                    'Last message',
-                    style: TextStyle(
-                        color: constantColors.greenColor,
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  trailing: Text(
-                    '2 hours ago',
-                    style: TextStyle(
-                        color: constantColors.whiteColor,
-                        fontSize: 9.0,
-                        fontWeight: FontWeight.bold),
+                  subtitle: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('chatrooms')
+                        .doc(documentSnapshot.id)
+                        .collection('messages')
+                        .orderBy('time', descending: true)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.data.docs.first.data()['username'] !=
+                              null &&
+                          snapshot.data.docs.first.data()['message'] != null) {
+                        return Text(
+                          '${snapshot.data.docs.first.data()['username']} : ${snapshot.data.docs.first.data()['message']}',
+                          style: TextStyle(
+                              color: constantColors.greenColor,
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.bold),
+                        );
+                      } else if (snapshot.data.docs.first.data()['username'] !=
+                              null &&
+                          snapshot.data.docs.first.data()['sticker'] != null) {
+                        return Text(
+                          '${snapshot.data.docs.first.data()['username']} sent a Sticker',
+                          style: TextStyle(
+                              color: constantColors.greenColor,
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.bold),
+                        );
+                      } else {
+                        return Container(
+                          width: 0.0,
+                          height: 0.0,
+                        );
+                      }
+                    },
                   ),
                   leading: CircleAvatar(
                     backgroundColor: constantColors.transparent,
@@ -366,5 +422,12 @@ class ChatroomHelper with ChangeNotifier {
             );
           }
         });
+  }
+
+  showLatestMessageTime(dynamic timeData) {
+    Timestamp t = timeData;
+    DateTime dateTime = t.toDate();
+    latestMessageTime = timeago.format(dateTime);
+    notifyListeners();
   }
 }

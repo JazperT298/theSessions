@@ -35,12 +35,14 @@ class GroupMessagingHelper with ChangeNotifier {
               reverse: true,
               children:
                   snapshot.data.docs.map((DocumentSnapshot documentSnapshot) {
-                    showLastMessageTime(documentSnapshot.data()['time']);
+                showLastMessageTime(documentSnapshot.data()['time']);
                 return Padding(
                   padding: const EdgeInsets.only(top: 4.0),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    height: documentSnapshot.data()['message'] != null ? MediaQuery.of(context).size.height * 0.125 : MediaQuery.of(context).size.height * 0.2,
+                    height: documentSnapshot.data()['message'] != null
+                        ? MediaQuery.of(context).size.height * 0.125
+                        : MediaQuery.of(context).size.height * 0.2,
                     child: Stack(
                       children: [
                         Padding(
@@ -64,15 +66,18 @@ class GroupMessagingHelper with ChangeNotifier {
                               // ),
                               Container(
                                 constraints: BoxConstraints(
-                                    maxHeight: documentSnapshot.data()['message'] != null ?
-                                        MediaQuery.of(context).size.height *
-                                            0.1 : MediaQuery.of(context).size.height * 0.42,
-                                    maxWidth:
-                                    documentSnapshot
-                                        .data()['message'] !=
-                                        null
-                                        ? MediaQuery.of(context).size.width * 0.8
-                                        : MediaQuery.of(context).size.width * 0.9,),
+                                  maxHeight:
+                                      documentSnapshot.data()['message'] != null
+                                          ? MediaQuery.of(context).size.height *
+                                              0.1
+                                          : MediaQuery.of(context).size.height *
+                                              0.42,
+                                  maxWidth: documentSnapshot
+                                              .data()['message'] !=
+                                          null
+                                      ? MediaQuery.of(context).size.width * 0.8
+                                      : MediaQuery.of(context).size.width * 0.9,
+                                ),
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 18.0),
                                   child: Column(
@@ -116,30 +121,33 @@ class GroupMessagingHelper with ChangeNotifier {
                                           ],
                                         ),
                                       ),
-                                      documentSnapshot.data()['message'] != null ?
-                                      Text(
-                                        documentSnapshot.data()['message'],
-                                        style: TextStyle(
-                                            color: constantColors.whiteColor,
-                                            fontSize: 14.0),
-                                      ) : Padding(
-                                        padding: const EdgeInsets.only(top: 8.0),
-                                        child: Container(
-                                          height: 90.0,
-                                          width: 100.0,
-                                          child: Image.network(
-                                            documentSnapshot.data()['sticker']
-                                          ),
-                                        ),
-                                      ),
+                                      documentSnapshot.data()['message'] != null
+                                          ? Text(
+                                              documentSnapshot
+                                                  .data()['message'],
+                                              style: TextStyle(
+                                                  color:
+                                                      constantColors.whiteColor,
+                                                  fontSize: 14.0),
+                                            )
+                                          : Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 8.0),
+                                              child: Container(
+                                                height: 90.0,
+                                                width: 100.0,
+                                                child: Image.network(
+                                                    documentSnapshot
+                                                        .data()['sticker']),
+                                              ),
+                                            ),
                                       Container(
                                         width: 80.0,
                                         child: Text(
                                           getLastMessageTime,
                                           style: TextStyle(
-                                            color: constantColors.whiteColor,
-                                            fontSize: 8.0
-                                          ),
+                                              color: constantColors.whiteColor,
+                                              fontSize: 8.0),
                                         ),
                                       )
                                     ],
@@ -351,9 +359,9 @@ class GroupMessagingHelper with ChangeNotifier {
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
-                          border: Border.all(color: constantColors.blueColor)
-                        ),
+                            borderRadius: BorderRadius.circular(5.0),
+                            border:
+                                Border.all(color: constantColors.blueColor)),
                         height: 30.0,
                         width: 30.0,
                         child: Image.asset('assets/icons/sunflower.png'),
@@ -379,7 +387,10 @@ class GroupMessagingHelper with ChangeNotifier {
                                 .map((DocumentSnapshot documentSnapshot) {
                               return GestureDetector(
                                 onTap: () {
-                                  sendStickers(context, documentSnapshot.data()['image'], chatRoomId);
+                                  sendStickers(
+                                      context,
+                                      documentSnapshot.data()['image'],
+                                      chatRoomId);
                                 },
                                 child: Container(
                                   height: 40.0,
@@ -409,18 +420,24 @@ class GroupMessagingHelper with ChangeNotifier {
         });
   }
 
-  sendStickers(BuildContext context, String stickerImageUrl, String chatRoomId) async {
-    await FirebaseFirestore.instance.collection('chatrooms').doc(chatRoomId).collection('messages').add({
+  sendStickers(
+      BuildContext context, String stickerImageUrl, String chatRoomId) async {
+    await FirebaseFirestore.instance
+        .collection('chatrooms')
+        .doc(chatRoomId)
+        .collection('messages')
+        .add({
       'sticker': stickerImageUrl,
+      'time': Timestamp.now(),
+      'useruid': Provider.of<Authentication>(context, listen: false).getUserUid,
       'username': Provider.of<FirebaseOperations>(context, listen: false)
           .getInitUserName,
       'userimage': Provider.of<FirebaseOperations>(context, listen: false)
           .getInitUserImage,
-      'time': Timestamp.now()
     });
   }
 
-  showLastMessageTime(dynamic timeData){
+  showLastMessageTime(dynamic timeData) {
     Timestamp timestamp = timeData;
     DateTime dateTime = timestamp.toDate();
     lastMessageTime = timeago.format(dateTime);
