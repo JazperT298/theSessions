@@ -7,10 +7,13 @@ import 'package:the_sessions/constants/Constantcolors.dart';
 import 'package:the_sessions/screens/Homepage/Homepage.dart';
 import 'package:the_sessions/services/Authentication.dart';
 import 'package:the_sessions/services/FirebaseOperations.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class GroupMessagingHelper with ChangeNotifier {
   bool hasMemberJoined = false;
+  String lastMessageTime;
   bool get getHsMemberJoined => hasMemberJoined;
+  String get getLastMessageTime => lastMessageTime;
   ConstantColors constantColors = ConstantColors();
 
   showMessages(BuildContext context, DocumentSnapshot documentSnapshot,
@@ -32,6 +35,7 @@ class GroupMessagingHelper with ChangeNotifier {
               reverse: true,
               children:
                   snapshot.data.docs.map((DocumentSnapshot documentSnapshot) {
+                    showLastMessageTime(documentSnapshot.data()['time']);
                 return Padding(
                   padding: const EdgeInsets.only(top: 4.0),
                   child: Container(
@@ -62,7 +66,7 @@ class GroupMessagingHelper with ChangeNotifier {
                                 constraints: BoxConstraints(
                                     maxHeight: documentSnapshot.data()['message'] != null ?
                                         MediaQuery.of(context).size.height *
-                                            0.1 : MediaQuery.of(context).size.height * 0.4,
+                                            0.1 : MediaQuery.of(context).size.height * 0.42,
                                     maxWidth:
                                     documentSnapshot
                                         .data()['message'] !=
@@ -121,10 +125,20 @@ class GroupMessagingHelper with ChangeNotifier {
                                       ) : Padding(
                                         padding: const EdgeInsets.only(top: 8.0),
                                         child: Container(
-                                          height: 100.0,
+                                          height: 90.0,
                                           width: 100.0,
                                           child: Image.network(
                                             documentSnapshot.data()['sticker']
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        width: 80.0,
+                                        child: Text(
+                                          getLastMessageTime,
+                                          style: TextStyle(
+                                            color: constantColors.whiteColor,
+                                            fontSize: 8.0
                                           ),
                                         ),
                                       )
@@ -404,5 +418,13 @@ class GroupMessagingHelper with ChangeNotifier {
           .getInitUserImage,
       'time': Timestamp.now()
     });
+  }
+
+  showLastMessageTime(dynamic timeData){
+    Timestamp timestamp = timeData;
+    DateTime dateTime = timestamp.toDate();
+    lastMessageTime = timeago.format(dateTime);
+    print(lastMessageTime);
+    notifyListeners();
   }
 }
