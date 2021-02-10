@@ -290,6 +290,9 @@ class StoryWidgets {
                             children: snapshots.data.docs
                                 .map((DocumentSnapshot documentSnapshot) {
                               return GestureDetector(
+                                onTap: () {
+                                  Provider.of<StoriesHelper>(context, listen: false).convertHighlightedIcon(documentSnapshot.data()['image']);
+                                },
                                 child: Padding(
                                   padding: const EdgeInsets.only(left:8.0),
                                   child: Container(
@@ -335,7 +338,24 @@ class StoryWidgets {
                               FontAwesomeIcons.check,
                               color: constantColors.whiteColor,
                             ),
-                            onPressed: () {})
+                            onPressed: () {
+                              if(storyHighlightTitleController.text.isNotEmpty){
+                                Provider.of<StoriesHelper>(context, listen: false).addStoryToNewAlbum(context, Provider.of<Authentication>(context, listen: false).getUserUid, storyHighlightTitleController.text, storyImage);
+                              }else{
+                                return showModalBottomSheet(context: context, builder: (context){
+                                  return Container(
+                                    color: constantColors.whiteColor,
+                                    height: 100.0,
+                                    width: 400.0,
+                                    child: Center(
+                                      child: Text(
+                                        'Add Album Title'
+                                      ),
+                                    ),
+                                  );
+                                });
+                              }
+                            })
                       ],
                     ),
                   )
