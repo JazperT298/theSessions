@@ -12,6 +12,7 @@ import 'package:the_sessions/screens/LandingPage/landingUtils.dart';
 import 'package:the_sessions/screens/Messaging/GroupMessageHelper.dart';
 import 'package:the_sessions/screens/ProfilePage/ProfileHelpers.dart';
 import 'package:the_sessions/screens/Splashscreen/splashScreen.dart';
+import 'package:the_sessions/screens/Stories/StoriesHelper.dart';
 import 'package:the_sessions/screens/Utils/PostOptions.dart';
 import 'package:the_sessions/screens/Utils/UploadPost.dart';
 import 'package:the_sessions/services/Authentication.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       providers: [
+        ChangeNotifierProvider(create: (_) => StoriesHelper()),
         ChangeNotifierProvider(create: (_) => GroupMessagingHelper()),
         ChangeNotifierProvider(create: (_) => ChatroomHelper()),
         ChangeNotifierProvider(create: (_) => AltProfileHelper()),

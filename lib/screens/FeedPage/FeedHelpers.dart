@@ -56,36 +56,51 @@ class FeedHelpers with ChangeNotifier {
 
   Widget feedBody(BuildContext context) {
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 8.0),
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('posts')
-                .orderBy('time', descending: true)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: SizedBox(
-                    height: 500.0,
-                    width: 400.0,
-                    child: Lottie.asset('assets/animations/loading.json'),
-                  ),
-                );
-              } else {
-                return loadPosts(context, snapshot);
-              }
-            },
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.06,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: constantColors.darkColor,
+                borderRadius: BorderRadius.circular(12.0)
+              ),
+            ),
           ),
-          decoration: BoxDecoration(
-              color: constantColors.darkColor.withOpacity(0.6),
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(18.0),
-                  topRight: Radius.circular(18.0))),
-        ),
+          Padding(
+            padding: const EdgeInsets.only(top: 2.0),
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('posts')
+                    .orderBy('time', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: SizedBox(
+                        height: 500.0,
+                        width: 400.0,
+                        child: Lottie.asset('assets/animations/loading.json'),
+                      ),
+                    );
+                  } else {
+                    return loadPosts(context, snapshot);
+                  }
+                },
+              ),
+              decoration: BoxDecoration(
+                  color: constantColors.darkColor.withOpacity(0.6),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(18.0),
+                      topRight: Radius.circular(18.0))),
+            ),
+          ),
+        ],
       ),
     );
   }

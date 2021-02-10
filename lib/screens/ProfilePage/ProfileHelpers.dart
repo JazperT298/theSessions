@@ -7,10 +7,13 @@ import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
 import 'package:the_sessions/screens/AltProfile/AltProfile.dart';
 import 'package:the_sessions/screens/LandingPage/landingPage.dart';
+import 'package:the_sessions/screens/Stories/StoriesWidget.dart';
 import 'package:the_sessions/screens/Utils/PostOptions.dart';
 import 'package:the_sessions/services/Authentication.dart';
 
+
 class ProfileHelpers with ChangeNotifier {
+  final StoryWidgets storyWidgets = StoryWidgets();
   ConstantColors constantColors = ConstantColors();
 
   Widget headerProfile(BuildContext context, dynamic snapshot) {
@@ -26,12 +29,26 @@ class ProfileHelpers with ChangeNotifier {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap: () {},
-                  child: CircleAvatar(
-                    backgroundColor: constantColors.transparent,
-                    radius: 60.0,
-                    backgroundImage:
-                        NetworkImage(snapshot.data.data()['userimage']),
+                  onTap: () {
+                    //Add Stories...
+                    StoryWidgets().addStory(context);
+                  },
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: constantColors.transparent,
+                        radius: 60.0,
+                        backgroundImage:
+                            NetworkImage(snapshot.data.data()['userimage']),
+                      ),
+                      Positioned(
+                        top: 90.0,
+                          left: 90.0,
+                          child: Icon(
+                        FontAwesomeIcons.plusCircle,
+                        color: constantColors.whiteColor,
+                      ))
+                    ],
                   ),
                 ),
                 Padding(
@@ -333,8 +350,8 @@ class ProfileHelpers with ChangeNotifier {
                         height: MediaQuery.of(context).size.height * 0.5,
                         width: MediaQuery.of(context).size.width,
                         child: FittedBox(
-                          child:
-                              Image.network(documentSnapshot.data()['postimage']),
+                          child: Image.network(
+                              documentSnapshot.data()['postimage']),
                         ),
                       ),
                     ),
@@ -528,21 +545,19 @@ class ProfileHelpers with ChangeNotifier {
                               size: 18.0,
                             ),
                             onLongPress: () {
-                              Provider.of<PostFunctions>(context,
-                                  listen: false)
+                              Provider.of<PostFunctions>(context, listen: false)
                                   .showLikes(context,
-                                  documentSnapshot.data()['caption']);
+                                      documentSnapshot.data()['caption']);
                             },
                             onTap: () {
                               print('Adding like..');
-                              Provider.of<PostFunctions>(context,
-                                  listen: false)
+                              Provider.of<PostFunctions>(context, listen: false)
                                   .addLike(
-                                  context,
-                                  documentSnapshot.data()['caption'],
-                                  Provider.of<Authentication>(context,
-                                      listen: false)
-                                      .getUserUid);
+                                      context,
+                                      documentSnapshot.data()['caption'],
+                                      Provider.of<Authentication>(context,
+                                              listen: false)
+                                          .getUserUid);
                             },
                           ),
                           StreamBuilder<QuerySnapshot>(
@@ -579,11 +594,11 @@ class ProfileHelpers with ChangeNotifier {
                                 GestureDetector(
                                   onTap: () {
                                     Provider.of<PostFunctions>(context,
-                                        listen: false)
+                                            listen: false)
                                         .showCommentsSheet(
-                                        context,
-                                        documentSnapshot,
-                                        documentSnapshot.data()['caption']);
+                                            context,
+                                            documentSnapshot,
+                                            documentSnapshot.data()['caption']);
                                   },
                                   child: Icon(
                                     FontAwesomeIcons.comment,
@@ -605,7 +620,8 @@ class ProfileHelpers with ChangeNotifier {
                                       );
                                     } else {
                                       return Padding(
-                                        padding: const EdgeInsets.only(left: 8.0),
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
                                         child: Text(
                                           snapshot.data.docs.length.toString(),
                                           style: TextStyle(
@@ -628,16 +644,15 @@ class ProfileHelpers with ChangeNotifier {
                                 GestureDetector(
                                   onLongPress: () {
                                     Provider.of<PostFunctions>(context,
-                                        listen: false)
-                                        .showAwardsPresenter(
-                                        context,
-                                        documentSnapshot.data()['caption']);
+                                            listen: false)
+                                        .showAwardsPresenter(context,
+                                            documentSnapshot.data()['caption']);
                                   },
                                   onTap: () {
                                     Provider.of<PostFunctions>(context,
-                                        listen: false)
+                                            listen: false)
                                         .showRewards(context,
-                                        documentSnapshot.data()['caption']);
+                                            documentSnapshot.data()['caption']);
                                   },
                                   child: Icon(
                                     FontAwesomeIcons.award,
@@ -659,7 +674,8 @@ class ProfileHelpers with ChangeNotifier {
                                       );
                                     } else {
                                       return Padding(
-                                        padding: const EdgeInsets.only(left: 8.0),
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
                                         child: Text(
                                           snapshot.data.docs.length.toString(),
                                           style: TextStyle(
@@ -684,5 +700,4 @@ class ProfileHelpers with ChangeNotifier {
           );
         });
   }
-
 }
