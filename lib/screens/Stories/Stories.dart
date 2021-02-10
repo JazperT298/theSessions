@@ -119,7 +119,9 @@ class _StoriesState extends State<Stories> {
                                 .getUserUid ==
                             widget.documentSnapshot.data()['useruid']
                         ? GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              storyWidgets.showViewers(context, widget.documentSnapshot.id, widget.documentSnapshot.data()['useruid']);
+                            },
                             child: Container(
                               height: 30.0,
                               width: 50.0,

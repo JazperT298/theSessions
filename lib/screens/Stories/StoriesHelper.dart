@@ -16,10 +16,11 @@ class StoriesHelper with ChangeNotifier {
   File storyImage;
   File get getStoryImage => storyImage;
   final StoryWidgets storyWidgets = StoryWidgets();
-  String storyImageUrl, storyHighlightIcon, storyTime;
+  String storyImageUrl, storyHighlightIcon, storyTime, lastSeenTime;
   String get getStoryImageUrl => storyImageUrl;
   String get getStoryHighlightIcon => storyHighlightIcon;
   String get getStoryTime => storyTime;
+  String get getLastSeenTime => lastSeenTime;
 
   Future selectStoryImage(BuildContext context, ImageSource source) async {
     final pickedStoryImage = await picker.getImage(source: source);
@@ -85,6 +86,7 @@ class StoriesHelper with ChangeNotifier {
     Timestamp timestamp = timeData;
     DateTime dateTime = timestamp.toDate();
     storyTime = timeago.format(dateTime);
+    lastSeenTime = timeago.format(dateTime);
     notifyListeners();
   }
 

@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
+import 'package:the_sessions/screens/AltProfile/AltProfile.dart';
 import 'package:the_sessions/screens/Homepage/Homepage.dart';
 import 'package:the_sessions/screens/Stories/StoriesHelper.dart';
 import 'package:the_sessions/services/Authentication.dart';
@@ -241,7 +242,8 @@ class StoryWidgets {
         context: context,
         builder: (context) {
           return Padding(
-            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
             child: Container(
               child: Column(
                 children: [
@@ -291,10 +293,13 @@ class StoryWidgets {
                                 .map((DocumentSnapshot documentSnapshot) {
                               return GestureDetector(
                                 onTap: () {
-                                  Provider.of<StoriesHelper>(context, listen: false).convertHighlightedIcon(documentSnapshot.data()['image']);
+                                  Provider.of<StoriesHelper>(context,
+                                          listen: false)
+                                      .convertHighlightedIcon(
+                                          documentSnapshot.data()['image']);
                                 },
                                 child: Padding(
-                                  padding: const EdgeInsets.only(left:8.0),
+                                  padding: const EdgeInsets.only(left: 8.0),
                                   child: Container(
                                     height: 50.0,
                                     width: 50.0,
@@ -339,21 +344,30 @@ class StoryWidgets {
                               color: constantColors.whiteColor,
                             ),
                             onPressed: () {
-                              if(storyHighlightTitleController.text.isNotEmpty){
-                                Provider.of<StoriesHelper>(context, listen: false).addStoryToNewAlbum(context, Provider.of<Authentication>(context, listen: false).getUserUid, storyHighlightTitleController.text, storyImage);
-                              }else{
-                                return showModalBottomSheet(context: context, builder: (context){
-                                  return Container(
-                                    color: constantColors.whiteColor,
-                                    height: 100.0,
-                                    width: 400.0,
-                                    child: Center(
-                                      child: Text(
-                                        'Add Album Title'
-                                      ),
-                                    ),
-                                  );
-                                });
+                              if (storyHighlightTitleController
+                                  .text.isNotEmpty) {
+                                Provider.of<StoriesHelper>(context,
+                                        listen: false)
+                                    .addStoryToNewAlbum(
+                                        context,
+                                        Provider.of<Authentication>(context,
+                                                listen: false)
+                                            .getUserUid,
+                                        storyHighlightTitleController.text,
+                                        storyImage);
+                              } else {
+                                return showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return Container(
+                                        color: constantColors.whiteColor,
+                                        height: 100.0,
+                                        width: 400.0,
+                                        child: Center(
+                                          child: Text('Add Album Title'),
+                                        ),
+                                      );
+                                    });
                               }
                             })
                       ],
@@ -367,6 +381,96 @@ class StoryWidgets {
                   color: constantColors.darkColor,
                   borderRadius: BorderRadius.circular(12.0)),
             ),
+          );
+        });
+  }
+
+  showViewers(BuildContext context, String storyId, String personUid) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 150.0),
+                  child: Divider(
+                    thickness: 4.0,
+                    color: constantColors.whiteColor,
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  width: MediaQuery.of(context).size.width,
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('stories')
+                        .doc(storyId)
+                        .collection('seen')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return ListView(
+                          children: snapshot.data.docs
+                              .map((DocumentSnapshot documentSnapshot) {
+                                Provider.of<StoriesHelper>(context, listen: false).storyTimePosted(documentSnapshot.data()['time']);
+                            return ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: constantColors.darkColor,
+                                backgroundImage: NetworkImage(
+                                  documentSnapshot.data()['userimage'],
+                                ),
+                                radius: 25.0,
+                              ),
+                              trailing: IconButton(
+                                icon: Icon(
+                                  FontAwesomeIcons.arrowCircleRight,
+                                  color: constantColors.yellowColor,
+                                ),
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      PageTransition(
+                                          child: AltProfile(
+                                            userUid: documentSnapshot
+                                                .data()['useruid'],
+                                          ),
+                                          type:
+                                              PageTransitionType.bottomToTop));
+                                },
+                              ),
+                              title: Text(
+                                documentSnapshot.data()['username'],
+                                style: TextStyle(
+                                    color: constantColors.whiteColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0),
+                              ),
+                              subtitle: Text(
+                                Provider.of<StoriesHelper>(context, listen: false).getLastSeenTime.toString(),
+                                style: TextStyle(
+                                    color: constantColors.greenColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12.0),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      }
+                    },
+                  ),
+                )
+              ],
+            ),
+            height: MediaQuery.of(context).size.height * 0.5,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+                color: constantColors.darkColor,
+                borderRadius: BorderRadius.circular(12.0)),
           );
         });
   }
