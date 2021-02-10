@@ -11,10 +11,12 @@ import 'package:the_sessions/screens/LandingPage/landingServices.dart';
 import 'package:the_sessions/screens/LandingPage/landingUtils.dart';
 import 'package:the_sessions/screens/Messaging/GroupMessageHelper.dart';
 import 'package:the_sessions/screens/ProfilePage/ProfileHelpers.dart';
+import 'package:the_sessions/screens/RewardsPage/RewardsHelpers.dart';
 import 'package:the_sessions/screens/Splashscreen/splashScreen.dart';
 import 'package:the_sessions/screens/Stories/StoriesHelper.dart';
 import 'package:the_sessions/screens/Utils/PostOptions.dart';
 import 'package:the_sessions/screens/Utils/UploadPost.dart';
+import 'package:the_sessions/screens/VideoconPage/VideoconHelpers.dart';
 import 'package:the_sessions/services/Authentication.dart';
 import 'package:the_sessions/services/FirebaseOperations.dart';
 
@@ -40,6 +42,8 @@ class MyApp extends StatelessWidget {
         ),
       ),
       providers: [
+        ChangeNotifierProvider(create: (_) => RewardsHelper()),
+        ChangeNotifierProvider(create: (_) => VideoconHelpers()),
         ChangeNotifierProvider(create: (_) => StoriesHelper()),
         ChangeNotifierProvider(create: (_) => GroupMessagingHelper()),
         ChangeNotifierProvider(create: (_) => ChatroomHelper()),

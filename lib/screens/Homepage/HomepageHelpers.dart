@@ -26,9 +26,11 @@ class HomepageHelpers with ChangeNotifier{
       },
         backgroundColor: Color(0xff040307),
       items: [
-        CustomNavigationBarItem(icon: Icon(EvaIcons.home)),
-        CustomNavigationBarItem(icon: Icon(EvaIcons.messageCircle)),
-        CustomNavigationBarItem(icon: Icon(FontAwesomeIcons.userAlt))
+        CustomNavigationBarItem(icon: Icon(EvaIcons.homeOutline)),
+        CustomNavigationBarItem(icon: Icon(EvaIcons.monitorOutline)),
+        CustomNavigationBarItem(icon: Icon(EvaIcons.messageCircleOutline)),
+        CustomNavigationBarItem(icon: Icon(EvaIcons.starOutline)),
+        CustomNavigationBarItem(icon: Icon(EvaIcons.peopleOutline))
     // CircleAvatar(
     // radius: 35.0,
     // backgroundColor: constantColors.blueGreyColor,
