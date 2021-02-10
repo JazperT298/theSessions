@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/screens/Stories/StoriesWidget.dart';
+import 'package:the_sessions/services/Authentication.dart';
 import 'package:the_sessions/services/FirebaseOperations.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class StoriesHelper with ChangeNotifier {
   UploadTask imageUploadTask;
@@ -14,9 +16,10 @@ class StoriesHelper with ChangeNotifier {
   File storyImage;
   File get getStoryImage => storyImage;
   final StoryWidgets storyWidgets = StoryWidgets();
-  String storyImageUrl, storyHighlightIcon;
+  String storyImageUrl, storyHighlightIcon, storyTime;
   String get getStoryImageUrl => storyImageUrl;
   String get getStoryHighlightIcon => storyHighlightIcon;
+  String get getStoryTime => storyTime;
 
   Future selectStoryImage(BuildContext context, ImageSource source) async {
     final pickedStoryImage = await picker.getImage(source: source);
@@ -76,5 +79,25 @@ class StoriesHelper with ChangeNotifier {
             .getInitUserImage,
       });
     });
+  }
+
+  storyTimePosted(dynamic timeData){
+    Timestamp timestamp = timeData;
+    DateTime dateTime = timestamp.toDate();
+    storyTime = timeago.format(dateTime);
+    notifyListeners();
+  }
+
+  Future addSeenStamp(BuildContext context, String storyId, String personId, DocumentSnapshot documentSnapshot) async {
+    if(documentSnapshot.data()['useruid'] != Provider.of<Authentication>(context, listen: false).getUserUid){
+      return FirebaseFirestore.instance.collection('stories').doc(storyId).collection('seen').doc(personId).set({
+        'time': Timestamp.now(),
+        'username': Provider.of<FirebaseOperations>(context, listen: false)
+            .getInitUserName,
+        'userimage': Provider.of<FirebaseOperations>(context, listen: false)
+            .getInitUserImage,
+        'useruid': Provider.of<Authentication>(context, listen: false).getUserUid
+      });
+    }
   }
 }

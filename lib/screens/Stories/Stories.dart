@@ -10,6 +10,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
 import 'package:the_sessions/screens/Homepage/Homepage.dart';
+import 'package:the_sessions/screens/Stories/StoriesHelper.dart';
 import 'package:the_sessions/screens/Stories/StoriesWidget.dart';
 import 'package:the_sessions/services/Authentication.dart';
 
@@ -25,16 +26,18 @@ class _StoriesState extends State<Stories> {
   final ConstantColors constantColors = ConstantColors();
   final StoryWidgets storyWidgets = StoryWidgets();
 
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   Timer(
-  //     Duration(
-  //       seconds: 15
-  //     ),() => Navigator.pushReplacement(context, PageTransition(child: Homepage(), type: PageTransitionType.bottomToTop)),
-  //   );
-  // }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Provider.of<StoriesHelper>(context, listen: false).storyTimePosted(widget.documentSnapshot.data()['time']);
+    Provider.of<StoriesHelper>(context, listen: false).addSeenStamp(context, widget.documentSnapshot.id, Provider.of<Authentication>(context, listen: false).getUserUid, widget.documentSnapshot);
+    // Timer(
+    //   Duration(
+    //     seconds: 15
+    //   ),() => Navigator.pushReplacement(context, PageTransition(child: Homepage(), type: PageTransitionType.bottomToTop)),
+    // );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,7 +105,7 @@ class _StoriesState extends State<Stories> {
                                   fontSize: 16.0),
                             ),
                             Text(
-                              '2 hours ago',
+                              Provider.of<StoriesHelper>(context, listen: false).getStoryTime,
                               style: TextStyle(
                                   color: constantColors.greenColor,
                                   fontWeight: FontWeight.bold,
@@ -129,12 +132,23 @@ class _StoriesState extends State<Stories> {
                                     color: constantColors.yellowColor,
                                     size: 16.0,
                                   ),
-                                  Text(
-                                    '0',
-                                    style: TextStyle(
-                                        color: constantColors.yellowColor,
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold),
+                                  StreamBuilder<QuerySnapshot>(
+                                    stream: FirebaseFirestore.instance.collection('stories').doc(widget.documentSnapshot.id).collection('seen').snapshots(),
+                                    builder: (context, snapshot){
+                                      if(snapshot.connectionState == ConnectionState.waiting){
+                                        return Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      }else{
+                                        return Text(
+                                          snapshot.data.docs.length.toString(),
+                                          style: TextStyle(
+                                              color: constantColors.yellowColor,
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold),
+                                        );
+                                      }
+                                    },
                                   )
                                 ],
                               ),
