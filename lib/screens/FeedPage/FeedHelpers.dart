@@ -10,6 +10,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
 import 'package:the_sessions/screens/AltProfile/AltProfile.dart';
+import 'package:the_sessions/screens/Stories/Stories.dart';
 import 'package:the_sessions/screens/Utils/PostOptions.dart';
 import 'package:the_sessions/screens/Utils/UploadPost.dart';
 import 'package:the_sessions/services/Authentication.dart';
@@ -61,12 +62,53 @@ class FeedHelpers with ChangeNotifier {
           Padding(
             padding: const EdgeInsets.all(4.0),
             child: Container(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('stories')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    return ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: snapshot.data.docs
+                          .map((DocumentSnapshot documentSnapshot) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.pushReplacement(
+                                context,
+                                PageTransition(
+                                    child: Stories(
+                                        documentSnapshot: documentSnapshot),
+                                    type: PageTransitionType.leftToRight));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Container(
+                              child: Image.network(documentSnapshot.data()['userimage']),
+                              height: 30.0,
+                              width: 50.0,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: constantColors.blueColor,
+                                      width: 2.0)),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  }
+                },
+              ),
               height: MediaQuery.of(context).size.height * 0.06,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                color: constantColors.darkColor,
-                borderRadius: BorderRadius.circular(12.0)
-              ),
+                  color: constantColors.darkColor,
+                  borderRadius: BorderRadius.circular(12.0)),
             ),
           ),
           Padding(
@@ -352,10 +394,9 @@ class FeedHelpers with ChangeNotifier {
                             GestureDetector(
                               onLongPress: () {
                                 Provider.of<PostFunctions>(context,
-                                    listen: false)
-                                    .showAwardsPresenter(
-                                    context,
-                                    documentSnapshot.data()['caption']);
+                                        listen: false)
+                                    .showAwardsPresenter(context,
+                                        documentSnapshot.data()['caption']);
                               },
                               onTap: () {
                                 Provider.of<PostFunctions>(context,

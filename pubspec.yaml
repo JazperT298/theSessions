@@ -41,6 +41,7 @@ dependencies:
   custom_navigation_bar: ^0.7.1
   lottie: ^0.7.0+1
   timeago: ^2.0.29
+  circular_countdown_timer: ^0.0.9
 
 dev_dependencies:
   flutter_test:
