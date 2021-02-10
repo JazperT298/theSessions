@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -8,6 +10,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
 import 'package:the_sessions/screens/Homepage/Homepage.dart';
+import 'package:the_sessions/screens/Stories/StoriesWidget.dart';
 import 'package:the_sessions/services/Authentication.dart';
 
 class Stories extends StatefulWidget {
@@ -20,15 +23,30 @@ class Stories extends StatefulWidget {
 
 class _StoriesState extends State<Stories> {
   final ConstantColors constantColors = ConstantColors();
+  final StoryWidgets storyWidgets = StoryWidgets();
+
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   Timer(
+  //     Duration(
+  //       seconds: 15
+  //     ),() => Navigator.pushReplacement(context, PageTransition(child: Homepage(), type: PageTransitionType.bottomToTop)),
+  //   );
+  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: constantColors.darkColor,
       body: GestureDetector(
         onPanUpdate: (update) {
-          if(update.delta.dx > 0){
+          if (update.delta.dx > 0) {
             print(update);
-            Navigator.pushReplacement(context, PageTransition(child: Homepage(), type: PageTransitionType.bottomToTop));
+            Navigator.pushReplacement(
+                context,
+                PageTransition(
+                    child: Homepage(), type: PageTransitionType.bottomToTop));
           }
         },
         child: Stack(
@@ -65,30 +83,33 @@ class _StoriesState extends State<Stories> {
                       ),
                       radius: 25.0,
                     ),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.58,
-                      constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * 0.9,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.documentSnapshot.data()['username'],
-                            style: TextStyle(
-                                color: constantColors.whiteColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16.0),
-                          ),
-                          Text(
-                            '2 hours ago',
-                            style: TextStyle(
-                                color: constantColors.greenColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12.0),
-                          )
-                        ],
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4.0),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.55,
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.9,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.documentSnapshot.data()['username'],
+                              style: TextStyle(
+                                  color: constantColors.whiteColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.0),
+                            ),
+                            Text(
+                              '2 hours ago',
+                              style: TextStyle(
+                                  color: constantColors.greenColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12.0),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                     Provider.of<Authentication>(context, listen: false)
@@ -100,7 +121,8 @@ class _StoriesState extends State<Stories> {
                               height: 30.0,
                               width: 50.0,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Icon(
                                     FontAwesomeIcons.solidEye,
@@ -137,7 +159,56 @@ class _StoriesState extends State<Stories> {
                     IconButton(
                         icon: Icon(EvaIcons.moreVertical),
                         color: constantColors.whiteColor,
-                        onPressed: () {})
+                        onPressed: () {
+                          return showMenu(
+                              color: constantColors.darkColor,
+                              context: context,
+                              position:
+                                  RelativeRect.fromLTRB(300.0, 70.0, 0.0, 0.0),
+                              items: [
+                                PopupMenuItem(
+                                    child: FlatButton.icon(
+                                        color: constantColors.blueColor,
+                                        onPressed: () {
+                                          storyWidgets.addToHighLights(
+                                              context,
+                                              widget.documentSnapshot
+                                                  .data()['image']);
+                                        },
+                                        icon: Icon(FontAwesomeIcons.file),
+                                        label: Text(
+                                          'Add To Highlights',
+                                          style: TextStyle(
+                                              color: constantColors.whiteColor),
+                                        ))),
+                                PopupMenuItem(
+                                    child: FlatButton.icon(
+                                        color: constantColors.redColor,
+                                        onPressed: () {
+                                          FirebaseFirestore.instance
+                                              .collection('stories')
+                                              .doc(Provider.of<Authentication>(
+                                                      context,
+                                                      listen: false)
+                                                  .getUserUid)
+                                              .delete()
+                                              .whenComplete(() {
+                                            Navigator.pushReplacement(
+                                                context,
+                                                PageTransition(
+                                                    child: Homepage(),
+                                                    type: PageTransitionType
+                                                        .bottomToTop));
+                                          });
+                                        },
+                                        icon: Icon(FontAwesomeIcons.trashAlt),
+                                        label: Text(
+                                          'Delete',
+                                          style: TextStyle(
+                                              color: constantColors.whiteColor),
+                                        ))),
+                              ]);
+                        })
                   ],
                 ),
               ),
