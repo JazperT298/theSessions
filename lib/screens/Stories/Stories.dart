@@ -32,11 +32,11 @@ class _StoriesState extends State<Stories> {
     super.initState();
     Provider.of<StoriesHelper>(context, listen: false).storyTimePosted(widget.documentSnapshot.data()['time']);
     Provider.of<StoriesHelper>(context, listen: false).addSeenStamp(context, widget.documentSnapshot.id, Provider.of<Authentication>(context, listen: false).getUserUid, widget.documentSnapshot);
-    // Timer(
-    //   Duration(
-    //     seconds: 15
-    //   ),() => Navigator.pushReplacement(context, PageTransition(child: Homepage(), type: PageTransitionType.bottomToTop)),
-    // );
+    Timer(
+      Duration(
+        seconds: 15
+      ),() => Navigator.pushReplacement(context, PageTransition(child: Homepage(), type: PageTransitionType.bottomToTop)),
+    );
   }
   @override
   Widget build(BuildContext context) {
