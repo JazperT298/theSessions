@@ -249,7 +249,7 @@ class ProfileHelpers with ChangeNotifier {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 150.0,
+                width: 110.0,
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(2.0)),
                 child: Row(
@@ -261,7 +261,7 @@ class ProfileHelpers with ChangeNotifier {
                       size: 16.0,
                     ),
                     Text(
-                      'Recently Added',
+                      'Highlights',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16.0,
@@ -274,11 +274,7 @@ class ProfileHelpers with ChangeNotifier {
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Container(
                   child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(snapshot.data.data()['useruid'])
-                        .collection('following')
-                        .snapshots(),
+                    stream: FirebaseFirestore.instance.collection('users').doc(Provider.of<Authentication>(context, listen: false).getUserUid).collection('highlights').snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(
@@ -289,25 +285,45 @@ class ProfileHelpers with ChangeNotifier {
                           scrollDirection: Axis.horizontal,
                           children: snapshot.data.docs
                               .map((DocumentSnapshot documentSnapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            } else {
-                              return new Container(
-                                height: 60.0,
-                                width: 60.0,
-                                child: Image.network(
-                                    documentSnapshot.data()['userimage']),
-                              );
-                            }
+                                return GestureDetector(
+                                  onTap: () {
+                                    storyWidgets.previewAllHighlights(context, documentSnapshot.data()['title']);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      height: MediaQuery.of(context).size.height * 0.1,
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                              documentSnapshot.data()['cover']
+                                            ),
+                                            backgroundColor: constantColors.darkColor,
+                                            radius: 20.0,
+                                          ),
+                                          Text(
+                                            documentSnapshot.data()['title'],
+                                            style: TextStyle(
+                                              color: constantColors.greenColor,
+                                              fontSize: 12.0,
+                                              fontWeight: FontWeight.bold
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
                           }).toList(),
                         );
                       }
                     },
                   ),
-                  height: MediaQuery.of(context).size.height * 0.08,
+                  height: MediaQuery.of(context).size.height * 0.10,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       color: constantColors.darkColor.withOpacity(0.4),

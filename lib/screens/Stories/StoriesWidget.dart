@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -265,6 +266,56 @@ class StoryWidgets {
                     // Streambuilder of stories
                     height: MediaQuery.of(context).size.height * 0.1,
                     width: MediaQuery.of(context).size.width,
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance.collection('users').doc(Provider.of<Authentication>(context, listen: false).getUserUid).collection('highlights').snapshots(),
+                      builder: (context, snapshots){
+                        if(snapshots.connectionState == ConnectionState.waiting){
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }else{
+                          return new ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: snapshots.data.docs.map((DocumentSnapshot documentSnapshot){
+                              return GestureDetector(
+                                onTap: () {
+                                  Provider.of<StoriesHelper>(context, listen: false).addStoryToExistingAlbum(context, documentSnapshot.id, Provider.of<Authentication>(context, listen: false).getUserUid,  storyImage);
+
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    height: MediaQuery.of(context).size.height * 0.1,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundImage: NetworkImage(
+                                              documentSnapshot.data()['cover']
+                                          ),
+                                          backgroundColor: constantColors.darkColor,
+                                          radius: 20.0,
+                                        ),
+                                        Text(
+                                          documentSnapshot.data()['title'],
+                                          style: TextStyle(
+                                              color: constantColors.greenColor,
+                                              fontSize: 12.0,
+                                              fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          );
+                        }
+                      },
+                    ),
                   ),
                   Text(
                     'Create New Album',
@@ -417,7 +468,9 @@ class StoryWidgets {
                         return ListView(
                           children: snapshot.data.docs
                               .map((DocumentSnapshot documentSnapshot) {
-                                Provider.of<StoriesHelper>(context, listen: false).storyTimePosted(documentSnapshot.data()['time']);
+                            Provider.of<StoriesHelper>(context, listen: false)
+                                .storyTimePosted(
+                                    documentSnapshot.data()['time']);
                             return ListTile(
                               leading: CircleAvatar(
                                 backgroundColor: constantColors.darkColor,
@@ -451,7 +504,10 @@ class StoryWidgets {
                                     fontSize: 16.0),
                               ),
                               subtitle: Text(
-                                Provider.of<StoriesHelper>(context, listen: false).getLastSeenTime.toString(),
+                                Provider.of<StoriesHelper>(context,
+                                        listen: false)
+                                    .getLastSeenTime
+                                    .toString(),
                                 style: TextStyle(
                                     color: constantColors.greenColor,
                                     fontWeight: FontWeight.bold,
@@ -471,6 +527,49 @@ class StoryWidgets {
             decoration: BoxDecoration(
                 color: constantColors.darkColor,
                 borderRadius: BorderRadius.circular(12.0)),
+          );
+        });
+  }
+
+  previewAllHighlights(BuildContext context, String highlightTitle) {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(Provider.of<Authentication>(context, listen: false)
+                      .getUserUid)
+                  .collection('highlights')
+                  .doc(highlightTitle)
+                  .collection('stories')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return PageView(
+                    children: snapshot.data.docs
+                        .map((DocumentSnapshot documentSnapshot) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: constantColors.darkColor
+                        ),
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                        child: Image.network(documentSnapshot.data()['image']),
+                      );
+                    }).toList(),
+                  );
+                }
+              },
+            ),
           );
         });
   }

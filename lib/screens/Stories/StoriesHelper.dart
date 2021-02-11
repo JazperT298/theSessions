@@ -82,7 +82,24 @@ class StoriesHelper with ChangeNotifier {
     });
   }
 
-  storyTimePosted(dynamic timeData){
+  Future addStoryToExistingAlbum(BuildContext context, String highlightColId,
+      String userUid, String storyImage) async {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(userUid)
+        .collection('highlights')
+        .doc(highlightColId)
+        .collection('stories')
+        .add({
+      'image': storyImage,
+      'username': Provider.of<FirebaseOperations>(context, listen: false)
+          .getInitUserName,
+      'userimage': Provider.of<FirebaseOperations>(context, listen: false)
+          .getInitUserImage,
+    });
+  }
+
+  storyTimePosted(dynamic timeData) {
     Timestamp timestamp = timeData;
     DateTime dateTime = timestamp.toDate();
     storyTime = timeago.format(dateTime);
@@ -90,15 +107,23 @@ class StoriesHelper with ChangeNotifier {
     notifyListeners();
   }
 
-  Future addSeenStamp(BuildContext context, String storyId, String personId, DocumentSnapshot documentSnapshot) async {
-    if(documentSnapshot.data()['useruid'] != Provider.of<Authentication>(context, listen: false).getUserUid){
-      return FirebaseFirestore.instance.collection('stories').doc(storyId).collection('seen').doc(personId).set({
+  Future addSeenStamp(BuildContext context, String storyId, String personId,
+      DocumentSnapshot documentSnapshot) async {
+    if (documentSnapshot.data()['useruid'] !=
+        Provider.of<Authentication>(context, listen: false).getUserUid) {
+      return FirebaseFirestore.instance
+          .collection('stories')
+          .doc(storyId)
+          .collection('seen')
+          .doc(personId)
+          .set({
         'time': Timestamp.now(),
         'username': Provider.of<FirebaseOperations>(context, listen: false)
             .getInitUserName,
         'userimage': Provider.of<FirebaseOperations>(context, listen: false)
             .getInitUserImage,
-        'useruid': Provider.of<Authentication>(context, listen: false).getUserUid
+        'useruid':
+            Provider.of<Authentication>(context, listen: false).getUserUid
       });
     }
   }
