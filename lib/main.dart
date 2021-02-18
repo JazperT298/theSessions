@@ -7,6 +7,7 @@ import 'package:the_sessions/Resources/AuthMethods.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
 import 'package:the_sessions/screens/AltProfile/AltProfileHelpers.dart';
 import 'package:the_sessions/screens/ChatroomPage/ChatroomHelper.dart';
+import 'package:the_sessions/screens/ChatroomPage/SearchScreen.dart';
 import 'package:the_sessions/screens/FeedPage/FeedHelpers.dart';
 import 'package:the_sessions/screens/Homepage/Homepage.dart';
 import 'package:the_sessions/screens/Homepage/HomepageHelpers.dart';
@@ -31,14 +32,25 @@ void main() async{
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   final AuthMethods _authMethods = AuthMethods();
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     ConstantColors constantColors = ConstantColors();
     return MultiProvider(
       child: MaterialApp(
+        title: "theSessions",
+        debugShowCheckedModeBanner: false,
+        initialRoute: '/',
+        routes: {
+          '/search_screen': (context) => SearchScreen(),
+        },
         home: FutureBuilder(
           future: _authMethods.getCurrentUser(),
           builder: (context, AsyncSnapshot<User> snapshot){
@@ -49,7 +61,6 @@ class MyApp extends StatelessWidget {
             }
           },
         ),
-        debugShowCheckedModeBanner: false,
         theme: ThemeData(
             accentColor: constantColors.blueColor,
             fontFamily: 'Poppins',

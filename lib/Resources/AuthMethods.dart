@@ -92,7 +92,7 @@ class AuthMethods {
         .set(users.toMap(users));
   }
 
-  Future<List<Users>> fetchAllUsers(Users currentUser) async {
+  Future<List<Users>> fetchAllUsers(User currentUser) async {
     List<Users> userList = List<Users>();
 
     QuerySnapshot querySnapshot =

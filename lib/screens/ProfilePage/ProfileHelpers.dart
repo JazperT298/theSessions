@@ -5,11 +5,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
+import 'package:the_sessions/models/Users.dart';
 import 'package:the_sessions/screens/AltProfile/AltProfile.dart';
+import 'package:the_sessions/screens/LandingPage/UserProvider.dart';
 import 'package:the_sessions/screens/LandingPage/landingPage.dart';
 import 'package:the_sessions/screens/Stories/StoriesWidget.dart';
 import 'package:the_sessions/screens/Utils/PostOptions.dart';
 import 'package:the_sessions/services/Authentication.dart';
+import 'package:the_sessions/widgets/CachedImage.dart';
 
 
 class ProfileHelpers with ChangeNotifier {
@@ -17,6 +20,9 @@ class ProfileHelpers with ChangeNotifier {
   ConstantColors constantColors = ConstantColors();
 
   Widget headerProfile(BuildContext context, dynamic snapshot) {
+
+    final UserProvider userProvider = Provider.of<UserProvider>(context);
+    final Users users = userProvider.getUser;
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.25,
       width: MediaQuery.of(context).size.width,
@@ -35,15 +41,17 @@ class ProfileHelpers with ChangeNotifier {
                   },
                   child: Stack(
                     children: [
-                      CircleAvatar(
-                        backgroundColor: constantColors.transparent,
-                        radius: 60.0,
-                        backgroundImage:
-                            NetworkImage(snapshot.data.data()['userimage']),
+                      Padding(
+                        padding: const EdgeInsets.only(top:8.0),
+                        child: CachedImage(
+                          users.profilePhoto,
+                          isRound: true,
+                          radius: 105.0,
+                        ),
                       ),
                       Positioned(
-                        top: 90.0,
-                          left: 90.0,
+                        top: 85.0,
+                          left: 80.0,
                           child: Icon(
                         FontAwesomeIcons.plusCircle,
                         color: constantColors.whiteColor,
@@ -54,7 +62,7 @@ class ProfileHelpers with ChangeNotifier {
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
-                    snapshot.data.data()['username'],
+                    users.name,
                     style: TextStyle(
                       color: constantColors.whiteColor,
                       fontWeight: FontWeight.bold,
@@ -75,7 +83,7 @@ class ProfileHelpers with ChangeNotifier {
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: Text(
-                          snapshot.data.data()['useremail'],
+                          users.email,
                           style: TextStyle(
                               color: constantColors.whiteColor,
                               fontWeight: FontWeight.bold,
@@ -110,7 +118,7 @@ class ProfileHelpers with ChangeNotifier {
                             StreamBuilder<QuerySnapshot>(
                               stream: FirebaseFirestore.instance
                                   .collection('users')
-                                  .doc(snapshot.data.data()['useruid'])
+                                  .doc(users.uid)
                                   .collection('followers')
                                   .snapshots(),
                               builder: (context, snapshot) {
@@ -155,7 +163,7 @@ class ProfileHelpers with ChangeNotifier {
                               StreamBuilder<QuerySnapshot>(
                                 stream: FirebaseFirestore.instance
                                     .collection('users')
-                                    .doc(snapshot.data.data()['useruid'])
+                                    .doc(users.uid)
                                     .collection('following')
                                     .snapshots(),
                                 builder: (context, snapshot) {
@@ -334,13 +342,15 @@ class ProfileHelpers with ChangeNotifier {
   }
 
   Widget footerProfile(BuildContext context, dynamic snapshot) {
+    final UserProvider userProvider = Provider.of<UserProvider>(context);
+    final Users users = userProvider.getUser;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('users')
-              .doc(snapshot.data.data()['useruid'])
+              .doc(users.uid)
               .collection('posts')
               .snapshots(),
           builder: (context, snapshot) {
