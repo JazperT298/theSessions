@@ -28,14 +28,14 @@ class _SplashscreenState extends State<Splashscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: constantColors.darkColor,
+      backgroundColor: constantColors.whiteColor,
       body: Center(
         child: RichText(
           text: TextSpan(
             text: 'the',
             style: TextStyle(
               fontFamily: 'Poppins',
-              color: constantColors.whiteColor,
+              color: constantColors.blueColor,
               fontWeight: FontWeight.bold,
               fontSize: 30.0
             ),
@@ -44,7 +44,7 @@ class _SplashscreenState extends State<Splashscreen> {
                 text: 'Sessions',
                 style: TextStyle(
                   fontFamily: 'Poppins',
-                  color: constantColors.whiteColor,
+                  color: constantColors.blueGreyColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 34.0),
               )

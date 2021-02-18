@@ -42,6 +42,11 @@ dependencies:
   lottie: ^0.7.0+1
   timeago: ^2.0.29
   circular_countdown_timer: ^0.0.9
+  agora_rtc_engine: ^3.2.1
+  intl: 0.16.1
+  permission_handler: 3.0.0
+  cached_network_image: ^2.0.0
+  path_provider: ^1.6.0
 
 dev_dependencies:
   flutter_test:
