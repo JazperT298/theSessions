@@ -1,8 +1,10 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:the_sessions/Resources/AuthMethods.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
 import 'package:the_sessions/screens/Homepage/Homepage.dart';
 import 'package:the_sessions/screens/LandingPage/landingHelpers.dart';
@@ -52,6 +54,9 @@ class Landingpage extends StatefulWidget {
 }
 
 class _LandingpageState extends State<Landingpage> {
+  final AuthMethods _authMethods = AuthMethods();
+
+  bool isLoginPressed = false;
 
   ConstantColors constantColors = ConstantColors();
 
@@ -83,23 +88,19 @@ class _LandingpageState extends State<Landingpage> {
                                     fontFamily: 'Poppins',
                                     color: constantColors.blueColor,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 30.0
-                                ),
+                                    fontSize: 30.0),
                                 children: <TextSpan>[
-                                  TextSpan(
-                                    text: 'Sessions',
-                                    style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        color: constantColors.blueGreyColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 34.0),
-                                  )
-                                ]
-                            )
-                        ),
+                              TextSpan(
+                                text: 'Sessions',
+                                style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    color: constantColors.blueGreyColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 34.0),
+                              )
+                            ])),
                       ],
-                    )
-                ),
+                    )),
                 SizedBox(
                   height: 30.0,
                 ),
@@ -112,13 +113,13 @@ class _LandingpageState extends State<Landingpage> {
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     prefixIcon:
-                    Icon(EvaIcons.emailOutline, color: Colors.black26),
+                        Icon(EvaIcons.emailOutline, color: Colors.black26),
                     enabledBorder: OutlineInputBorder(
                         borderSide: new BorderSide(color: Colors.black12),
                         borderRadius: BorderRadius.circular(30.0)),
                     focusedBorder: OutlineInputBorder(
                         borderSide:
-                        new BorderSide(color: Style.Colors.mainColor),
+                            new BorderSide(color: Style.Colors.mainColor),
                         borderRadius: BorderRadius.circular(30.0)),
                     contentPadding: EdgeInsets.only(left: 10.0, right: 10.0),
                     labelText: "Email",
@@ -153,7 +154,7 @@ class _LandingpageState extends State<Landingpage> {
                         borderRadius: BorderRadius.circular(30.0)),
                     focusedBorder: OutlineInputBorder(
                         borderSide:
-                        new BorderSide(color: Style.Colors.mainColor),
+                            new BorderSide(color: Style.Colors.mainColor),
                         borderRadius: BorderRadius.circular(30.0)),
                     contentPadding: EdgeInsets.only(left: 10.0, right: 10.0),
                     labelText: "Password",
@@ -177,8 +178,7 @@ class _LandingpageState extends State<Landingpage> {
                   child: new InkWell(
                       child: new Text(
                         "Forget password?",
-                        style:
-                        TextStyle(color: Colors.black45, fontSize: 12.0),
+                        style: TextStyle(color: Colors.black45, fontSize: 12.0),
                       ),
                       onTap: () {}),
                 ),
@@ -190,57 +190,61 @@ class _LandingpageState extends State<Landingpage> {
                       SizedBox(
                           height: 45,
                           child:
-                          // state is LoginLoading
-                          //     ? Column(
-                          //   crossAxisAlignment:
-                          //   CrossAxisAlignment.center,
-                          //   mainAxisAlignment: MainAxisAlignment.center,
-                          //   children: <Widget>[
-                          //     Center(
-                          //         child: Column(
-                          //           mainAxisAlignment:
-                          //           MainAxisAlignment.center,
-                          //           children: [
-                          //             SizedBox(
-                          //               height: 25.0,
-                          //               width: 25.0,
-                          //               child: CupertinoActivityIndicator(),
-                          //             )
-                          //           ],
-                          //         ))
-                          //   ],
-                          // )
-                          //     :
-                          RaisedButton(
-                              color: Style.Colors.mainColor,
-                              disabledColor: Style.Colors.mainColor,
-                              disabledTextColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                              ),
-                              onPressed: () {
-                                if (_usernameController.text.isNotEmpty ||
-                                    _usernameController.text.isNotEmpty ||
-                                    _passwordController.text.isNotEmpty) {
-                                  Provider.of<Authentication>(context, listen: false)
-                                      .logIntoAccount(_usernameController.text,
-                                      _passwordController.text)
-                                      .whenComplete(() {
-                                    Navigator.pushReplacement(
-                                        context,
-                                        PageTransition(
-                                            child: Homepage(),
-                                            type: PageTransitionType.bottomToTop));
-                                  });
-                                } else {
-                                  warningText(context, 'Fill all the fields');
-                                }
-                              },
-                              child: Text("LOG IN",
-                                  style: new TextStyle(
-                                      fontSize: 12.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white)))),
+                              // state is LoginLoading
+                              //     ? Column(
+                              //   crossAxisAlignment:
+                              //   CrossAxisAlignment.center,
+                              //   mainAxisAlignment: MainAxisAlignment.center,
+                              //   children: <Widget>[
+                              //     Center(
+                              //         child: Column(
+                              //           mainAxisAlignment:
+                              //           MainAxisAlignment.center,
+                              //           children: [
+                              //             SizedBox(
+                              //               height: 25.0,
+                              //               width: 25.0,
+                              //               child: CupertinoActivityIndicator(),
+                              //             )
+                              //           ],
+                              //         ))
+                              //   ],
+                              // )
+                              //     :
+                              RaisedButton(
+                                  color: Style.Colors.mainColor,
+                                  disabledColor: Style.Colors.mainColor,
+                                  disabledTextColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                  ),
+                                  onPressed: () {
+                                    if (_usernameController.text.isNotEmpty ||
+                                        _usernameController.text.isNotEmpty ||
+                                        _passwordController.text.isNotEmpty) {
+                                      Provider.of<Authentication>(context,
+                                              listen: false)
+                                          .logIntoAccount(
+                                              _usernameController.text,
+                                              _passwordController.text)
+                                          .whenComplete(() {
+                                        Navigator.pushReplacement(
+                                            context,
+                                            PageTransition(
+                                                child: Homepage(),
+                                                type: PageTransitionType
+                                                    .bottomToTop));
+                                      });
+                                    } else {
+                                      warningText(
+                                          context, 'Fill all the fields');
+                                    }
+                                  },
+                                  child: isLoginPressed ? Center(child: CircularProgressIndicator(),) : Text("LOG IN",
+                                      style: new TextStyle(
+                                          fontSize: 12.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white)))),
                     ],
                   ),
                 ),
@@ -298,7 +302,9 @@ class _LandingpageState extends State<Landingpage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            performGoogleLogin();
+                          },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -383,5 +389,42 @@ class _LandingpageState extends State<Landingpage> {
           );
         });
   }
-}
 
+  void performGoogleLogin() {
+    print("tring to perform login");
+
+    setState(() {
+      isLoginPressed = true;
+    });
+
+    _authMethods.googleSignIn().then((User user) {
+      if (user != null) {
+        authenticateGoogleUser(user);
+      } else {
+        print("There was an error");
+      }
+    });
+  }
+
+  void authenticateGoogleUser(User user) {
+    _authMethods.authenticateGoogleUser(user).then((isNewUser) {
+      setState(() {
+        isLoginPressed = false;
+      });
+
+      if (isNewUser) {
+        _authMethods.addDataToDb(user).then((value) {
+            Navigator.pushReplacement(
+                context,
+                PageTransition(
+                    child: Homepage(), type: PageTransitionType.bottomToTop));
+        });
+      } else {
+        Navigator.pushReplacement(
+            context,
+            PageTransition(
+                child: Homepage(), type: PageTransitionType.bottomToTop));
+      }
+    });
+  }
+}

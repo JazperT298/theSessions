@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "47132843449-trunun29no6a9anc1f1rkg4371mjdnvu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.theyestech.the_sessions",
+            "certificate_hash": "44ede306cd621ceb9c12a29ce32d9d7ffc462361"
+          }
+        },
+        {
           "client_id": "47132843449-ft597aqfmn9knbfcl4ql194b9m1nq8g1.apps.googleusercontent.com",
           "client_type": 3
         }
