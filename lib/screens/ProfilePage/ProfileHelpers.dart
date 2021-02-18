@@ -291,30 +291,26 @@ class ProfileHelpers with ChangeNotifier {
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      height: MediaQuery.of(context).size.height * 0.1,
-                                      width: MediaQuery.of(context).size.width,
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                              documentSnapshot.data()['cover']
-                                            ),
-                                            backgroundColor: constantColors.darkColor,
-                                            radius: 20.0,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundImage: NetworkImage(
+                                            documentSnapshot.data()['cover']
                                           ),
-                                          Text(
-                                            documentSnapshot.data()['title'],
-                                            style: TextStyle(
-                                              color: constantColors.greenColor,
-                                              fontSize: 12.0,
-                                              fontWeight: FontWeight.bold
-                                            ),
+                                          backgroundColor: constantColors.darkColor,
+                                          radius: 20.0,
+                                        ),
+                                        Text(
+                                          documentSnapshot.data()['title'],
+                                          style: TextStyle(
+                                            color: constantColors.greenColor,
+                                            fontSize: 12.0,
+                                            fontWeight: FontWeight.bold
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 );
@@ -323,7 +319,7 @@ class ProfileHelpers with ChangeNotifier {
                       }
                     },
                   ),
-                  height: MediaQuery.of(context).size.height * 0.10,
+                  height: MediaQuery.of(context).size.height * 0.1,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       color: constantColors.darkColor.withOpacity(0.4),

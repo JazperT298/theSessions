@@ -7,12 +7,14 @@ import 'package:provider/provider.dart';
 import 'package:the_sessions/constants/Constantcolors.dart';
 import 'package:the_sessions/screens/AltProfile/AltProfile.dart';
 import 'package:the_sessions/screens/Homepage/Homepage.dart';
+import 'package:the_sessions/screens/Stories/StoriesWidget.dart';
 import 'package:the_sessions/screens/Utils/PostOptions.dart';
 import 'package:the_sessions/services/Authentication.dart';
 import 'package:the_sessions/services/FirebaseOperations.dart';
 
 class AltProfileHelper with ChangeNotifier {
   ConstantColors constantColors = ConstantColors();
+  StoryWidgets storyWidgets = StoryWidgets();
 
   Widget appBar(BuildContext context) {
     return AppBar(
@@ -346,45 +348,98 @@ class AltProfileHelper with ChangeNotifier {
   }
 
   Widget middleProfile(BuildContext context, dynamic snapshot) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 150.0,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(2.0)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Icon(
-                  FontAwesomeIcons.userAstronaut,
-                  color: constantColors.yellowColor,
-                  size: 16.0,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 110.0,
+                decoration:
+                BoxDecoration(borderRadius: BorderRadius.circular(2.0)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Icon(
+                      FontAwesomeIcons.userAstronaut,
+                      color: constantColors.yellowColor,
+                      size: 16.0,
+                    ),
+                    Text(
+                      'Highlights',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                          color: constantColors.whiteColor),
+                    )
+                  ],
                 ),
-                Text(
-                  'Recently Added',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
-                      color: constantColors.whiteColor),
-                )
-              ],
-            ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Container(
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance.collection('users').doc(Provider.of<Authentication>(context, listen: false).getUserUid).collection('highlights').snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return new ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: snapshot.data.docs
+                              .map((DocumentSnapshot documentSnapshot) {
+                            return GestureDetector(
+                              onTap: () {
+                                storyWidgets.previewAllHighlights(context, documentSnapshot.data()['title']);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          documentSnapshot.data()['cover']
+                                      ),
+                                      backgroundColor: constantColors.darkColor,
+                                      radius: 20.0,
+                                    ),
+                                    Text(
+                                      documentSnapshot.data()['title'],
+                                      style: TextStyle(
+                                          color: constantColors.greenColor,
+                                          fontSize: 12.0,
+                                          fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      }
+                    },
+                  ),
+                  height: MediaQuery.of(context).size.height * 0.1,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      color: constantColors.darkColor.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(15.0)),
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.1,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                  color: constantColors.darkColor.withOpacity(0.4),
-                  borderRadius: BorderRadius.circular(15.0)),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

@@ -419,35 +419,35 @@ class ChatroomHelper with ChangeNotifier {
                   onLongPress: () {
                     showChatroomDetails(context, documentSnapshot);
                   },
-                  trailing: Container(
-                    width: 80.0,
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('chatrooms')
-                          .doc(documentSnapshot.id)
-                          .collection('messages')
-                          .orderBy('time', descending: true)
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        showLatestMessageTime(
-                            snapshot.data.docs.first.data()['time']);
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else {
-                          return Text(
-                            getLatestMessageTime,
-                            style: TextStyle(
-                                color: constantColors.whiteColor,
-                                fontSize: 9.0,
-                                fontWeight: FontWeight.bold),
-                          );
-                        }
-                      },
-                    ),
-                  ),
+                  // trailing: Container(
+                  //   width: 80.0,
+                  //   child: StreamBuilder<QuerySnapshot>(
+                  //     stream: FirebaseFirestore.instance
+                  //         .collection('chatrooms')
+                  //         .doc(documentSnapshot.id)
+                  //         .collection('messages')
+                  //         .orderBy('time', descending: true)
+                  //         .snapshots(),
+                  //     builder: (context, snapshot) {
+                  //       showLatestMessageTime(
+                  //           snapshot.data.docs.first.data()['time']);
+                  //       if (snapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return Center(
+                  //           child: CircularProgressIndicator(),
+                  //         );
+                  //       } else {
+                  //         return Text(
+                  //           getLatestMessageTime,
+                  //           style: TextStyle(
+                  //               color: constantColors.whiteColor,
+                  //               fontSize: 9.0,
+                  //               fontWeight: FontWeight.bold),
+                  //         );
+                  //       }
+                  //     },
+                  //   ),
+                  // ),
                   title: Text(
                     documentSnapshot.data()['roomname'],
                     style: TextStyle(
@@ -455,46 +455,46 @@ class ChatroomHelper with ChangeNotifier {
                         fontSize: 14.0,
                         fontWeight: FontWeight.bold),
                   ),
-                  subtitle: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('chatrooms')
-                        .doc(documentSnapshot.id)
-                        .collection('messages')
-                        .orderBy('time', descending: true)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else if (snapshot.data.docs.first.data()['username'] !=
-                              null &&
-                          snapshot.data.docs.first.data()['message'] != null) {
-                        return Text(
-                          '${snapshot.data.docs.first.data()['username']} : ${snapshot.data.docs.first.data()['message']}',
-                          style: TextStyle(
-                              color: constantColors.greenColor,
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.bold),
-                        );
-                      } else if (snapshot.data.docs.first.data()['username'] !=
-                              null &&
-                          snapshot.data.docs.first.data()['sticker'] != null) {
-                        return Text(
-                          '${snapshot.data.docs.first.data()['username']} sent a Sticker',
-                          style: TextStyle(
-                              color: constantColors.greenColor,
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.bold),
-                        );
-                      } else {
-                        return Container(
-                          width: 0.0,
-                          height: 0.0,
-                        );
-                      }
-                    },
-                  ),
+                  // subtitle: StreamBuilder<QuerySnapshot>(
+                  //   stream: FirebaseFirestore.instance
+                  //       .collection('chatrooms')
+                  //       .doc(documentSnapshot.id)
+                  //       .collection('messages')
+                  //       .orderBy('time', descending: true)
+                  //       .snapshots(),
+                  //   builder: (context, snapshot) {
+                  //     if (snapshot.connectionState == ConnectionState.waiting) {
+                  //       return Center(
+                  //         child: CircularProgressIndicator(),
+                  //       );
+                  //     } else if (snapshot.data.docs.first.data()['username'] !=
+                  //             null &&
+                  //         snapshot.data.docs.first.data()['message'] != null) {
+                  //       return Text(
+                  //         '${snapshot.data.docs.first.data()['username']} : ${snapshot.data.docs.first.data()['message']}',
+                  //         style: TextStyle(
+                  //             color: constantColors.greenColor,
+                  //             fontSize: 12.0,
+                  //             fontWeight: FontWeight.bold),
+                  //       );
+                  //     } else if (snapshot.data.docs.first.data()['username'] !=
+                  //             null &&
+                  //         snapshot.data.docs.first.data()['sticker'] != null) {
+                  //       return Text(
+                  //         '${snapshot.data.docs.first.data()['username']} sent a Sticker',
+                  //         style: TextStyle(
+                  //             color: constantColors.greenColor,
+                  //             fontSize: 12.0,
+                  //             fontWeight: FontWeight.bold),
+                  //       );
+                  //     } else {
+                  //       return Container(
+                  //         width: 0.0,
+                  //         height: 0.0,
+                  //       );
+                  //     }
+                  //   },
+                  // ),
                   leading: CircleAvatar(
                     backgroundColor: constantColors.transparent,
                     // backgroundImage: AssetImage(
