@@ -47,7 +47,7 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       elevation: 0,
       bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight + 20),
+        preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Padding(
           padding: EdgeInsets.only(left: 20),
           child: TextField(
@@ -62,7 +62,7 @@ class _SearchScreenState extends State<SearchScreen> {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.white,
-              fontSize: 35,
+              fontSize: 20,
             ),
             decoration: InputDecoration(
               suffixIcon: IconButton(
@@ -76,7 +76,7 @@ class _SearchScreenState extends State<SearchScreen> {
               hintText: "Search",
               hintStyle: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 35,
+                fontSize: 20,
                 color: Color(0x88ffffff),
               ),
             ),
@@ -87,7 +87,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   buildSuggestions(String query) {
-    final List<User> suggestionList = query.isEmpty
+    final List<Users> suggestionList = query.isEmpty
         ? []
         : userList != null
         ? userList.where((Users user) {
@@ -109,12 +109,12 @@ class _SearchScreenState extends State<SearchScreen> {
       itemBuilder: ((context, index) {
         Users searchedUser = Users(
             uid: suggestionList[index].uid,
-            profilePhoto: suggestionList[index].photoURL,
-            name: suggestionList[index].displayName,
-            username: suggestionList[index].email);
+            profilePhoto: suggestionList[index].profilePhoto,
+            name: suggestionList[index].name,
+            email: suggestionList[index].email);
 
         return CustomTile(
-          mini: false,
+          mini: true,
           onTap: () {
             Navigator.push(
                 context,
@@ -125,18 +125,19 @@ class _SearchScreenState extends State<SearchScreen> {
           },
           leading: CircleAvatar(
             backgroundImage: NetworkImage(searchedUser.profilePhoto),
-            backgroundColor: Colors.grey,
+            backgroundColor: Colors.grey
           ),
           title: Text(
-            searchedUser.username,
+            searchedUser.email,
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
+              fontSize: 12.0
             ),
           ),
           subtitle: Text(
             searchedUser.name,
-            style: TextStyle(color: UniversalVariables.greyColor),
+            style: TextStyle(color: UniversalVariables.greyColor,fontSize: 12.0),
           ),
         );
       }),

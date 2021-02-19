@@ -51,7 +51,7 @@ class ViewLayout extends StatelessWidget {
     final UserProvider userProvider = Provider.of<UserProvider>(context);
 
     return CustomTile(
-      mini: false,
+      mini: true,
       onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
@@ -68,7 +68,7 @@ class ViewLayout extends StatelessWidget {
 
         (contact != null ? contact.name : null) != null ? contact.name : "..",
         style:
-        TextStyle(color: Colors.white, fontFamily: "Arial", fontSize: 19),
+        TextStyle(color: Colors.white, fontFamily: "Arial", fontSize: 13),
       ),
       subtitle: LastMessageContainer(
         stream: _chatMethods.fetchLastMessageBetween(
@@ -77,12 +77,12 @@ class ViewLayout extends StatelessWidget {
         ),
       ),
       leading: Container(
-        constraints: BoxConstraints(maxHeight: 60, maxWidth: 60),
+        constraints: BoxConstraints(maxHeight: 55, maxWidth: 55),
         child: Stack(
           children: <Widget>[
             CachedImage(
               contact.profilePhoto,
-              radius: 80,
+              radius: 45,
               isRound: true,
             ),
             OnlineDotIndicator(

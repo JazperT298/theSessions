@@ -12,10 +12,12 @@ class SessionAppBar extends StatelessWidget implements PreferredSizeWidget{
     return CustomAppBar(
       leading: IconButton(
         icon: Icon(
-          Icons.notifications,
+          Icons.search,
           color: Colors.white,
         ),
-        onPressed: (){},
+        onPressed: (){
+          Navigator.pushNamed(context, "/search_screen");
+        },
       ),
       centerTitle: true,
       title: title is String

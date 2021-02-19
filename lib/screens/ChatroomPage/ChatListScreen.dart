@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_sessions/Resources/ChatMethods.dart';
+import 'package:the_sessions/constants/Constantcolors.dart';
 import 'package:the_sessions/models/Contact.dart';
 import 'package:the_sessions/screens/ChatroomPage/Pickup/PickupLayout.dart';
 import 'package:the_sessions/screens/ChatroomPage/Widgets/ContactView.dart';
@@ -14,6 +15,7 @@ import 'package:the_sessions/widgets/CustomAppBar.dart';
 import 'package:the_sessions/widgets/SessionAppBar.dart';
 
 class ChatListScreen extends StatelessWidget {
+  ConstantColors constantColors = ConstantColors();
   CustomAppBar customAppBar(BuildContext context) {
     final UserProvider userProvider = Provider.of<UserProvider>(context);
     return CustomAppBar(
@@ -29,7 +31,7 @@ class ChatListScreen extends StatelessWidget {
       actions: <Widget>[
         IconButton(
           icon: Icon(
-            Icons.search,
+            Icons.more_vert,
             color: Colors.white,
           ),
           onPressed: () {
@@ -54,24 +56,43 @@ class ChatListScreen extends StatelessWidget {
       scaffold: Scaffold(
         backgroundColor: UniversalVariables.blackColor,
         appBar: SessionAppBar(
-          title: UserCircle(),
+          title: RichText(
+            text: TextSpan(
+                text: 'My ',
+                style: TextStyle(
+                    color: constantColors.whiteColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0
+                ),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: 'Chats',
+                    style: TextStyle(
+                      color: constantColors.blueColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                    ),
+                  )
+                ]
+            ),
+          ),
           actions: <Widget>[
             IconButton(
               icon: Icon(
-                Icons.search,
+                Icons.more_vert,
                 color: Colors.white,
               ),
               onPressed: () {
                 Navigator.pushNamed(context, "/search_screen");
               },
             ),
-            IconButton(
-              icon: Icon(
-                Icons.more_vert,
-                color: Colors.white,
-              ),
-              onPressed: () {},
-            ),
+            // IconButton(
+            //   icon: Icon(
+            //     Icons.more_vert,
+            //     color: Colors.white,
+            //   ),
+            //   onPressed: () {},
+            // ),
           ],
         ),
         floatingActionButton: NewChatButton(),

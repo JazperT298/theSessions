@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_sessions/constants/Constantcolors.dart';
 import 'package:the_sessions/screens/ChatroomPage/SearchScreen.dart';
 import 'package:the_sessions/utils/UniversalVariables.dart';
 
@@ -13,6 +14,7 @@ class QuietBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ConstantColors constantColors = ConstantColors();
     return Center(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 25),
@@ -44,7 +46,7 @@ class QuietBox extends StatelessWidget {
               SizedBox(height: 25),
               FlatButton(
                 color: UniversalVariables.lightBlueColor,
-                child: Text("START SEARCHING"),
+                child: Text("START SEARCHING",style: TextStyle(color: constantColors.whiteColor),),
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
